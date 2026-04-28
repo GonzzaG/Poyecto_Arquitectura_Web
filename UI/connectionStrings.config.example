@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <connectionStrings>
 	<add name="DefaultConnection"
-		 connectionString="Data Source=TU_SERVIDOR;Initial Catalog=TU_BASE;User ID=TU_USUARIO;Password=TU_PASSWORD"
+		 connectionString="Data Source=PONER_ACA_SERVIDOR;Database=ArquitecturaWebHvacWebForms;Trusted_Connection=True;MultipleActiveResultSets=true"
 		 providerName="System.Data.SqlClient" />
 </connectionStrings>
