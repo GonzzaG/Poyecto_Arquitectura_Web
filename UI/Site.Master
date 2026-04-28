@@ -1,28 +1,21 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="UI.SiteMaster" %>
 
 <!DOCTYPE html>
-
 <html lang="es">
 <head runat="server">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%: Page.Title %> - Mi aplicación ASP.NET</title>
-
-    <asp:PlaceHolder runat="server">
-        <%: Scripts.Render("~/bundles/modernizr") %>
-    </asp:PlaceHolder>
-
-    <webopt:bundlereference runat="server" path="~/Content/css" />
-    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-
+    <title><%: Page.Title %> - GestClima</title>
+    <link href="<%: ResolveUrl("~/Content/app.css") %>" rel="stylesheet" type="text/css" />
+    <link href="<%: ResolveUrl("~/Content/Site.css") %>" rel="stylesheet" type="text/css" />
+    <link href="<%: ResolveUrl("~/favicon.ico") %>" rel="shortcut icon" type="image/x-icon" />
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
-<body>
+<body class="min-h-screen bg-slate-50 text-slate-950 antialiased">
     <form runat="server">
         <asp:ScriptManager runat="server">
             <Scripts>
-                <%--To learn more about bundling scripts in ScriptManager see https://go.microsoft.com/fwlink/?LinkID=301884 --%>
-                <%--Framework Scripts--%>
                 <asp:ScriptReference Name="MsAjaxBundle" />
                 <asp:ScriptReference Name="jquery" />
                 <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
@@ -34,37 +27,76 @@
                 <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
                 <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
                 <asp:ScriptReference Name="WebFormsBundle" />
-                <%--Site Scripts--%>
             </Scripts>
         </asp:ScriptManager>
 
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" runat="server" href="~/">Nombre de la aplicación</a>
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/About">Acerca de</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Contact">Contacto</a></li>
-                    </ul>
+        <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+            <nav class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8" aria-label="Navegaci&oacute;n principal">
+                <div class="flex min-h-16 items-center justify-between gap-4">
+                    <a class="flex min-w-0 items-center gap-3 text-lg font-bold tracking-tight text-slate-950" runat="server" href="~/">
+                        <img class="h-10 w-10 shrink-0 rounded object-contain" src="~/Content/images/logo.png" alt="GestClima" runat="server" />
+                        <span class="truncate">GestClima</span>
+                    </a>
+
+                    <button class="inline-flex h-10 items-center gap-2 rounded border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-cyan-600/30 md:hidden"
+                        type="button"
+                        aria-controls="main-navigation"
+                        aria-expanded="false"
+                        data-menu-button>
+                        <span>Men&uacute;</span>
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+                        </svg>
+                    </button>
+
+                    <div class="hidden items-center gap-2 text-sm font-semibold text-slate-600 md:flex">
+                        <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
+                        <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora">Bit&aacute;cora</a>
+                        <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Login">Login</a>
+                        <a class="rounded bg-slate-950 px-4 py-2 text-white transition hover:bg-cyan-700" runat="server" href="~/Registro">Registro</a>
+                    </div>
                 </div>
+
+                <div id="main-navigation" class="border-t border-slate-200 py-3 text-sm font-semibold text-slate-700 md:hidden" data-menu-panel hidden>
+                    <div class="flex flex-col gap-1">
+                        <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
+                        <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora">Bit&aacute;cora</a>
+                        <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Login">Login</a>
+                        <a class="rounded bg-slate-950 px-3 py-3 text-white transition hover:bg-cyan-700" runat="server" href="~/Registro">Registro</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main role="main">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+        </main>
+
+        <footer class="border-t border-slate-200 bg-white">
+            <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm text-slate-500 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+                <span>&copy; <%: DateTime.Now.Year %> GestClima</span>
+                <span>Plataforma para proveedores, técnicos y consumidores.</span>
             </div>
-        </nav>
-        <div class="container body-content">
-            <asp:ContentPlaceHolder ID="MainContent" runat="server">
-            </asp:ContentPlaceHolder>
-            <hr />
-            <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - Mi aplicación ASP.NET</p>
-            </footer>
-        </div>
+        </footer>
     </form>
-    <asp:PlaceHolder runat="server">
-        <%: Scripts.Render("~/Scripts/bootstrap.js") %>
-    </asp:PlaceHolder>
+    <script>
+        (function () {
+            var buttons = document.querySelectorAll("[data-menu-button]");
+
+            buttons.forEach(function (button) {
+                var panel = document.getElementById(button.getAttribute("aria-controls"));
+
+                if (!panel) {
+                    return;
+                }
+
+                button.addEventListener("click", function () {
+                    var isOpen = button.getAttribute("aria-expanded") === "true";
+                    button.setAttribute("aria-expanded", String(!isOpen));
+                    panel.hidden = isOpen;
+                });
+            });
+        })();
+    </script>
 </body>
 </html>
