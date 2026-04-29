@@ -51,6 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseSynchronization.cs" />
+    <Compile Include="Migrations\202604280000000_InitialCreate.cs" />
+    <Compile Include="Migrations\202604280000000_InitialCreate.Designer.cs">
+      <DependentUpon>202604280000000_InitialCreate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\202604290247522_BitacoraUpdate.cs" />
     <Compile Include="Migrations\202604290247522_BitacoraUpdate.Designer.cs">
       <DependentUpon>202604290247522_BitacoraUpdate.cs</DependentUpon>
