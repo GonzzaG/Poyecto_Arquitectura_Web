@@ -1,10 +1,9 @@
 using System;
 
-namespace BEL
+namespace BEL.DTOs.Bitacora
 {
-    public class Bitacora
+    public sealed class BitacoraRegistroDto
     {
-        public int IdBitacora { get; set; }
         public DateTime FechaUtc { get; set; }
         public string TipoEvento { get; set; }
         public string Modulo { get; set; }
@@ -16,7 +15,7 @@ namespace BEL
         public string UsuarioEmail { get; set; }
         public string Url { get; set; }
         public string Ip { get; set; }
-
-        public virtual Usuario Usuario { get; set; }
+        public string CodigoCorrelacion { get; set; }
+        public Exception Exception { get; set; }
     }
 }
