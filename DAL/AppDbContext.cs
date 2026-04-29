@@ -5,6 +5,11 @@ namespace DAL
 {
     public class AppDbContext : DbContext
     {
+        static AppDbContext()
+        {
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<AppDbContext, Migrations.Configuration>());
+        }
+
         public AppDbContext() : base("name=DefaultConnection")
         {
         }
@@ -43,13 +48,19 @@ namespace DAL
             modelBuilder.Entity<Bitacora>().ToTable("BITACORA");
             modelBuilder.Entity<Bitacora>().HasKey(x => x.IdBitacora);
             modelBuilder.Entity<Bitacora>().Property(x => x.IdBitacora).HasColumnName("id_bitacora");
+            modelBuilder.Entity<Bitacora>().Property(x => x.FechaUtc).HasColumnName("fecha_utc").IsRequired();
+            modelBuilder.Entity<Bitacora>().Property(x => x.TipoEvento).HasColumnName("tipo_evento").HasMaxLength(20).IsRequired();
             modelBuilder.Entity<Bitacora>().Property(x => x.Modulo).HasColumnName("modulo").HasMaxLength(80).IsRequired();
+            modelBuilder.Entity<Bitacora>().Property(x => x.Accion).HasColumnName("accion").HasMaxLength(120).IsRequired();
+            modelBuilder.Entity<Bitacora>().Property(x => x.Resultado).HasColumnName("resultado").HasMaxLength(20).IsRequired();
+            modelBuilder.Entity<Bitacora>().Property(x => x.Mensaje).HasColumnName("mensaje").HasMaxLength(500).IsRequired();
+            modelBuilder.Entity<Bitacora>().Property(x => x.Detalle).HasColumnName("detalle").HasMaxLength(4000);
             modelBuilder.Entity<Bitacora>().Property(x => x.IdUsuario).HasColumnName("id_usuario");
-            modelBuilder.Entity<Bitacora>().Property(x => x.FechaHora).HasColumnName("fecha_hora");
-            modelBuilder.Entity<Bitacora>().Property(x => x.Criticidad).HasColumnName("criticidad").HasMaxLength(40).IsRequired();
-            modelBuilder.Entity<Bitacora>().Property(x => x.Dvh).HasColumnName("dvh").HasMaxLength(255).IsRequired();
+            modelBuilder.Entity<Bitacora>().Property(x => x.UsuarioEmail).HasColumnName("usuario_email").HasMaxLength(160);
+            modelBuilder.Entity<Bitacora>().Property(x => x.Url).HasColumnName("url").HasMaxLength(260);
+            modelBuilder.Entity<Bitacora>().Property(x => x.Ip).HasColumnName("ip").HasMaxLength(64);
             modelBuilder.Entity<Bitacora>()
-                .HasRequired(x => x.Usuario)
+                .HasOptional(x => x.Usuario)
                 .WithMany(x => x.Bitacoras)
                 .HasForeignKey(x => x.IdUsuario)
                 .WillCascadeOnDelete(false);

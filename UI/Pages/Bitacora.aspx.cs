@@ -1,46 +1,83 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI;
+using BEL.DTOs.Bitacora;
+using Business.Services.Bitacora;
 
 namespace UI
 {
     public partial class Bitacora : Page
     {
+        private static readonly BitacoraService BitacoraService = new BitacoraService();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                var eventos = new List<BitacoraEvento>
-                {
-                    new BitacoraEvento("Usuarios", "admin@hvac.local", DateTime.Today.AddHours(9).AddMinutes(15), "Media", "A91F-32B0"),
-                    new BitacoraEvento("Pedidos", "ventas@hvac.local", DateTime.Today.AddHours(10).AddMinutes(40), "Alta", "B42C-10FE"),
-                    new BitacoraEvento("Stock", "proveedor@hvac.local", DateTime.Today.AddHours(11).AddMinutes(5), "Baja", "C88D-77AC")
-                };
-
-                Eventos.DataSource = eventos;
-                Eventos.DataBind();
-
-                EventosMobile.DataSource = eventos;
-                EventosMobile.DataBind();
+                CargarEventos();
             }
         }
 
-        private sealed class BitacoraEvento
+        private void CargarEventos()
         {
-            public BitacoraEvento(string modulo, string usuario, DateTime fechaHora, string criticidad, string dvh)
+            var eventos = BitacoraService.ObtenerRecientes(200)
+                .Select(x => new BitacoraFila
+                {
+                    FechaUtc = x.FechaUtc,
+                    TipoEvento = x.TipoEvento,
+                    Modulo = x.Modulo,
+                    Accion = x.Accion,
+                    Resultado = x.Resultado,
+                    Usuario = string.IsNullOrWhiteSpace(x.UsuarioEmail) ? "Sistema" : x.UsuarioEmail,
+                    Mensaje = x.Mensaje,
+                    Url = x.Url
+                })
+                .ToList();
+
+            Eventos.DataSource = eventos;
+            Eventos.DataBind();
+
+            EventosMobile.DataSource = eventos;
+            EventosMobile.DataBind();
+        }
+        private int? IntentarObtenerIdUsuario()
+        {
+            object idSesion = Session?["IdUsuario"] ?? Session?["UsuarioId"];
+            if (idSesion == null)
             {
-                Modulo = modulo;
-                Usuario = usuario;
-                FechaHora = fechaHora;
-                Criticidad = criticidad;
-                Dvh = dvh;
+                return null;
             }
 
-            public string Modulo { get; private set; }
-            public string Usuario { get; private set; }
-            public DateTime FechaHora { get; private set; }
-            public string Criticidad { get; private set; }
-            public string Dvh { get; private set; }
+            int idConvertido;
+            return int.TryParse(idSesion.ToString(), out idConvertido) ? (int?)idConvertido : null;
+        }
+
+        private string IntentarObtenerUsuarioEmail()
+        {
+            object emailSesion = Session?["UsuarioEmail"] ?? Session?["Email"];
+            if (emailSesion != null && !string.IsNullOrWhiteSpace(emailSesion.ToString()))
+            {
+                return emailSesion.ToString();
+            }
+
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return User.Identity.Name;
+            }
+
+            return null;
+        }
+
+        private sealed class BitacoraFila
+        {
+            public DateTime FechaUtc { get; set; }
+            public string TipoEvento { get; set; }
+            public string Modulo { get; set; }
+            public string Accion { get; set; }
+            public string Resultado { get; set; }
+            public string Usuario { get; set; }
+            public string Mensaje { get; set; }
+            public string Url { get; set; }
         }
     }
 }

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System;
+using System.Configuration;
+using System.Diagnostics;
 using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
-using System.Web.Security;
-using System.Web.SessionState;
-using DAL;
+using Business.Services.Database;
 
 namespace UI
 {
@@ -14,10 +12,28 @@ namespace UI
     {
         void Application_Start(object sender, EventArgs e)
         {
-            // Código que se ejecuta al iniciar la aplicación
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            DatabaseInitializer.Initialize();
+            SincronizarBaseDatosSiEstaHabilitado();
+        }
+
+        private static void SincronizarBaseDatosSiEstaHabilitado()
+        {
+            bool sincronizar;
+            if (!bool.TryParse(ConfigurationManager.AppSettings["SincronizarBaseDatosAlIniciar"], out sincronizar) || !sincronizar)
+            {
+                return;
+            }
+
+            try
+            {
+                new DatabaseMigrationService().Sincronizar();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("No se pudo sincronizar la base de datos al iniciar la aplicacion. " + ex);
+                throw;
+            }
         }
     }
 }
