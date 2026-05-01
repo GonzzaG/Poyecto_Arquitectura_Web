@@ -82,6 +82,68 @@ namespace DAL.Repository.Bitacora
             }
         }
 
+
+        public IList<BitacoraRegistroDto> ObtenerFiltrado(
+            string busqueda,
+            int pagina,
+            int tamanioPagina,
+            out int totalRegistros)
+        {
+            var paginaSegura = pagina <= 0 ? 1 : pagina;
+            var tamanioSeguro = tamanioPagina <= 0 ? 10 : tamanioPagina;
+
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    var query = context.Bitacoras.AsQueryable();
+
+                    if (!string.IsNullOrWhiteSpace(busqueda))
+                    {
+                        query = query.Where(x =>
+                            (x.TipoEvento != null && x.TipoEvento.Contains(busqueda)) ||
+                            (x.Modulo != null && x.Modulo.Contains(busqueda)) ||
+                            (x.Accion != null && x.Accion.Contains(busqueda)) ||
+                            (x.Resultado != null && x.Resultado.Contains(busqueda)) ||
+                            (x.UsuarioEmail != null && x.UsuarioEmail.Contains(busqueda)) ||
+                            (x.Mensaje != null && x.Mensaje.Contains(busqueda)) ||
+                            (x.Url != null && x.Url.Contains(busqueda)) ||
+                            (x.Ip != null && x.Ip.Contains(busqueda)));
+                    }
+
+                    totalRegistros = query.Count();
+
+                    return query
+                        .OrderByDescending(x => x.FechaUtc)
+                        .Skip((paginaSegura - 1) * tamanioSeguro)
+                        .Take(tamanioSeguro)
+                        .Select(x => new BitacoraRegistroDto
+                        {
+                            FechaUtc = x.FechaUtc,
+                            TipoEvento = x.TipoEvento,
+                            Modulo = x.Modulo,
+                            Accion = x.Accion,
+                            Resultado = x.Resultado,
+                            UsuarioEmail = x.UsuarioEmail,
+                            Mensaje = x.Mensaje,
+                            Url = x.Url,
+                            IdUsuario = x.IdUsuario,
+                            Ip = x.Ip,
+                            Detalle = x.Detalle
+                        })
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("No se pudo obtener bitácora filtrada. " + ex);
+                totalRegistros = 0;
+                return new List<BitacoraRegistroDto>();
+            }
+        }
+
+
+
         private static string Limitar(string valor, int maxLength, string fallback)
         {
             if (string.IsNullOrWhiteSpace(valor))
