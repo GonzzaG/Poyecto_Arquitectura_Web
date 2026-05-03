@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="DTOs\Bitacora\BitacoraRegistroDto.cs" />
     <Compile Include="Rol.cs" />
+    <Compile Include="Sesion.cs" />
     <Compile Include="Usuario.cs" />
     <Compile Include="Bitacora.cs" />
     <Compile Include="Pedido.cs" />

@@ -28,7 +28,7 @@ namespace Business.Services.Usuarios
         }
         public Cookie Login(string email, string password)
         {
-            if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 throw new ArgumentException("El email y la contraseña no pueden estar vacíos.");
             }
@@ -42,6 +42,6 @@ namespace Business.Services.Usuarios
             {
                 throw new UnauthorizedAccessException("Credenciales inválidas.");
             }
-
         }
+    }
 }
