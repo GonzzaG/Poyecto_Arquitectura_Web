@@ -13,14 +13,22 @@ namespace DAL.Repository.Usuarios
         {
             if (!string.IsNullOrEmpty(email))
             {
-
+                using (var context = new AppDbContext())
+                {
+                    return context.Usuarios.FirstOrDefault(u => u.Email == email);
+                }
             }
             else
             {
                 throw new ArgumentException("El email no puede ser nulo o vacío.", nameof(email));
             }
-            // Lógica para obtener un usuario por su email
-            return null;
+        }
+        public List<Usuario> ObtenerTodos()
+        {
+            using (var context = new AppDbContext())
+            {
+                return context.Usuarios.ToList();
+            }
         }
     }
 }

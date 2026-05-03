@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BEL;
+using Services;
 namespace Business.Services.Usuarios
 {
     public class UsuarioService
