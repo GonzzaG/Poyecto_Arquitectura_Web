@@ -61,6 +61,8 @@
       <DependentUpon>202604290247522_BitacoraUpdate.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\Sesiones\SesionRepository.cs" />
+    <Compile Include="Repository\Usuarios\UsuarioRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BEL\BEL.csproj">
