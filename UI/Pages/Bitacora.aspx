@@ -2,19 +2,54 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+
+        <%-- ── Encabezado y controles de búsqueda ── --%>
         <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
                 <p class="text-sm font-semibold uppercase tracking-wide text-cyan-700">Auditoría</p>
                 <h1 class="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Bitácora del sistema</h1>
                 <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Registro unificado de acciones y errores del sistema.</p>
             </div>
-            <div class="flex flex-col gap-2 sm:flex-row">
-                <input class="w-full rounded border border-slate-300 px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-600/20 md:w-64" type="search" placeholder="Buscar evento" />
-                <button class="w-full rounded bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700 sm:w-auto" type="button">Filtrar</button>
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+
+                <%-- Input de búsqueda --%>
+                <asp:TextBox
+                    ID="TxtBusqueda"
+                    runat="server"
+                    CssClass="w-full rounded border border-slate-300 px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-600/20 md:w-64"
+                    placeholder="Buscar en cualquier columna" />
+
+                <%-- Botón Filtrar --%>
+                <asp:Button
+                    ID="BtnFiltrar"
+                    runat="server"
+                    Text="Filtrar"
+                    OnClick="BtnFiltrar_Click"
+                    CssClass="w-full rounded bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700 sm:w-auto" />
+
+                <%-- Selector de tamaño de página --%>
+                <asp:DropDownList
+                    ID="DdlTamanio"
+                    runat="server"
+                    AutoPostBack="true"
+                    OnSelectedIndexChanged="DdlTamanio_SelectedIndexChanged"
+                    CssClass="rounded border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-600/20">
+                    <asp:ListItem Text="10" Value="10" Selected="True" />
+                    <asp:ListItem Text="20" Value="20" />
+                    <asp:ListItem Text="40" Value="40" />
+                </asp:DropDownList>
+
             </div>
         </div>
 
-        <div class="mt-6 grid gap-3 md:hidden">
+        <%-- ── Info de resultados ── --%>
+        <div class="mt-4 flex items-center justify-between text-sm text-slate-500">
+            <asp:Label ID="LblTotal" runat="server" Text="" />
+            <asp:Label ID="LblPagina" runat="server" Text="" CssClass="font-medium text-slate-700" />
+        </div>
+
+        <%-- ── Vista mobile ── --%>
+        <div class="mt-4 grid gap-3 md:hidden">
             <asp:Repeater ID="EventosMobile" runat="server">
                 <ItemTemplate>
                     <article class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -43,9 +78,19 @@
                     </article>
                 </ItemTemplate>
             </asp:Repeater>
-        </div>
 
-        <div class="mt-8 hidden overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm md:block">
+
+        </div>
+        <asp:Panel ID="PanelSinResultados" runat="server" Visible="false">
+            <div class="mt-6 rounded-lg border border-slate-200 bg-white p-6 text-center shadow-sm">
+                <p class="text-sm font-semibold text-slate-700">No hay resultados</p>
+                <p class="mt-2 text-xs text-slate-500">
+                    No se encontraron eventos para los filtros aplicados.
+                </p>
+            </div>
+        </asp:Panel>
+        <%-- ── Vista desktop ── --%>
+        <div class="mt-6 hidden overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm md:block">
             <div class="overflow-x-auto">
                 <asp:Repeater ID="Eventos" runat="server">
                     <HeaderTemplate>
@@ -75,11 +120,28 @@
                         </tr>
                     </ItemTemplate>
                     <FooterTemplate>
-                            </tbody>
+                        </tbody>
                         </table>
                     </FooterTemplate>
                 </asp:Repeater>
             </div>
         </div>
+
+        <%-- ── Paginación ── --%>
+        <asp:Panel ID="PanelPaginacion" runat="server" CssClass="mt-4 flex items-center justify-end gap-2">
+            <asp:Button
+                ID="BtnAnterior"
+                runat="server"
+                Text="Ant."
+                OnClick="BtnAnterior_Click"
+                CssClass="rounded border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:opacity-40" />
+            <asp:Button
+                ID="BtnSiguiente"
+                runat="server"
+                Text="Sig."
+                OnClick="BtnSiguiente_Click"
+                CssClass="rounded border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:opacity-40" />
+        </asp:Panel>
+
     </section>
 </asp:Content>

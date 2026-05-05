@@ -55,6 +55,11 @@ namespace Business.Services.Bitacora
             return _repository.ObtenerRecientes(cantidadMaxima);
         }
 
+        public IList<BitacoraRegistroDto> ObtenerFiltrado(string busqueda, int pagina, int tamanioPagina, out int totalRegistros)
+        {
+            return _repository.ObtenerFiltrado(busqueda, pagina, tamanioPagina, out totalRegistros);
+        }
+
         private static string ConstruirDetalleError(Exception exception, string codigoCorrelacion)
         {
             var builder = new StringBuilder();
