@@ -64,6 +64,10 @@
     <Compile Include="Migrations\202605050000000_CreateSesion.Designer.cs">
       <DependentUpon>202605050000000_CreateSesion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202605050010000_SeedDemoUsers.cs" />
+    <Compile Include="Migrations\202605050010000_SeedDemoUsers.Designer.cs">
+      <DependentUpon>202605050010000_SeedDemoUsers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\Sesiones\SesionRepository.cs" />
     <Compile Include="Repository\Usuarios\UsuarioRepository.cs" />
@@ -93,6 +97,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202605050000000_CreateSesion.resx">
       <DependentUpon>202605050000000_CreateSesion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605050010000_SeedDemoUsers.resx">
+      <DependentUpon>202605050010000_SeedDemoUsers.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
