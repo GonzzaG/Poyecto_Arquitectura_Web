@@ -351,6 +351,7 @@
     <Compile Include="Pages\Error.aspx.designer.cs">
       <DependentUpon>Error.aspx</DependentUpon>
     </Compile>
+    <Compile Include="WebMessageBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

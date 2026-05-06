@@ -21,6 +21,8 @@ namespace DAL
         public DbSet<DetallePedido> DetallesPedido { get; set; }
         public DbSet<Objeto> Objetos { get; set; }
 
+        public DbSet<Sesion> Sesions { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -105,6 +107,12 @@ namespace DAL
             modelBuilder.Entity<Objeto>().Property(x => x.Descripcion).HasColumnName("descripcion").HasMaxLength(600).IsRequired();
             modelBuilder.Entity<Objeto>().Property(x => x.EsProducto).HasColumnName("esProducto");
             modelBuilder.Entity<Objeto>().Property(x => x.Stock).HasColumnName("stock");
+
+            modelBuilder.Entity<Sesion>().ToTable("SESION");
+            modelBuilder.Entity<Sesion>().HasKey(x => x.IdSession);
+            modelBuilder.Entity<Sesion>().Property(x => x.IdSession).HasColumnName("id_sesion");
+            modelBuilder.Entity<Sesion>().Property(x => x.Email).HasColumnName("email").HasMaxLength(160);
+            modelBuilder.Entity<Sesion>().Property(x => x.FechaCreacion).HasColumnName("fecha_creacion");
         }
     }
 }
