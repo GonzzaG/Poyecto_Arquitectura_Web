@@ -32,7 +32,7 @@ namespace UI
             try
             {
                 Cookie session = UsuarioService.Login(Email.Text.Trim(), Password.Text);
-                Request.Form.Clear(); // Limpiar el formulario para evitar que los datos queden en memoria
+                Response.Redirect("Default.aspx"); // Limpiar el formulario para evitar que los datos queden en memoria
             }
             catch (Exception ex)
             {
