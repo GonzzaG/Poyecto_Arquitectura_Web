@@ -1,9 +1,12 @@
 using System;
 using System.Net;
+using System.Web;
 using System.Web.UI;
 using BEL.DTOs.Bitacora;
 using Business.Services.Bitacora;
 using Business.Services.Usuarios;
+using Microsoft.Ajax.Utilities;
+using System.Text.Json;
 
 namespace UI
 {
@@ -32,6 +35,15 @@ namespace UI
             try
             {
                 Cookie session = UsuarioService.Login(Email.Text.Trim(), Password.Text);
+                string json = JsonSerializer.Serialize(session);
+                HttpCookie authCookie = new HttpCookie("AuthToken", json)
+                {
+                    HttpOnly = true,
+                    Secure = Request.IsSecureConnection,
+                    Expires = session.Expires,
+                };
+                HttpContext.Current.Response.Cookies.Clear();
+                Response.Cookies.Add(authCookie);
                 Response.Redirect("Default.aspx"); // Limpiar el formulario para evitar que los datos queden en memoria
             }
             catch (Exception ex)

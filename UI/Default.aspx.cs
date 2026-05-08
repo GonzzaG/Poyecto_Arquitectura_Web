@@ -11,7 +11,11 @@ namespace UI
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if(!string.IsNullOrEmpty(Session["ErrorMsg"] as string))
+            {
+                WebMessageBox.Show(this, Session["ErrorMsg"] as string);
+                Session["ErrorMsg"] = null;
+            }
         }
     }
 }

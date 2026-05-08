@@ -8,12 +8,13 @@ namespace UI
 {
     public static class WebMessageBox
     {
-        public static void Show(this Page Page, String Message)
+        public static void Show(this Page page, string message)
         {
-            Page.ClientScript.RegisterStartupScript(
-                Page.GetType(),
+            string safe = HttpUtility.JavaScriptStringEncode(message);
+            page.ClientScript.RegisterStartupScript(
+                page.GetType(),
                 "MessageBox",
-                "<script language='javascript'>alert('" + Message + "');</script>"
+                $"<script>alert('{safe}');</script>"
             );
         }
     }

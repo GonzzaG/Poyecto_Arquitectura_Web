@@ -31,7 +31,7 @@ namespace DAL.Repository.Sesiones
                 {
                     Email = email,
                     IdSession = sessionId,
-                    FechaCreacion = DateTime.UtcNow
+                    FechaCreacion = now
                 };
                 context.Sesions.Add(sesion);
                 context.SaveChanges();

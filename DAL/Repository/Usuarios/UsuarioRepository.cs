@@ -15,7 +15,9 @@ namespace DAL.Repository.Usuarios
             {
                 using (var context = new AppDbContext())
                 {
-                    return context.Usuarios.FirstOrDefault(u => u.Email == email);
+                    Usuario usuario = context.Usuarios.FirstOrDefault(u => u.Email == email);
+                    usuario.Rol = context.Roles.FirstOrDefault(r => r.IdRol == usuario.IdRol);
+                    return usuario;
                 }
             }
             else

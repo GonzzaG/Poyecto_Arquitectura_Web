@@ -1,13 +1,16 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using BEL;
-
 namespace DAL
 {
     public class AppDbContext : DbContext
     {
         static AppDbContext()
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<AppDbContext, Migrations.Configuration>());
+            // Disable automatic initializer so migrations are not applied implicitly when the first
+            // DbContext instance is created (for example during login). Migrations will be run
+            // explicitly by the startup synchronization when the feature flag is enabled.
+            Database.SetInitializer<AppDbContext>(null);
         }
 
         public AppDbContext() : base("name=DefaultConnection")
@@ -110,7 +113,7 @@ namespace DAL
 
             modelBuilder.Entity<Sesion>().ToTable("SESION");
             modelBuilder.Entity<Sesion>().HasKey(x => x.IdSession);
-            modelBuilder.Entity<Sesion>().Property(x => x.IdSession).HasColumnName("id_sesion");
+            modelBuilder.Entity<Sesion>().Property(x => x.IdSession).HasColumnName("id_sesion").HasColumnType("uniqueidentifier").IsRequired().HasDatabaseGeneratedOption(DatabaseGeneratedOption.None) ;
             modelBuilder.Entity<Sesion>().Property(x => x.Email).HasColumnName("email").HasMaxLength(160);
             modelBuilder.Entity<Sesion>().Property(x => x.FechaCreacion).HasColumnName("fecha_creacion");
         }

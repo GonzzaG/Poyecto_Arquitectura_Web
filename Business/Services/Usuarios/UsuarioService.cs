@@ -43,5 +43,26 @@ namespace Business.Services.Usuarios
                 throw new UnauthorizedAccessException("Credenciales inválidas.");
             }
         }
+        public bool ValidarAcceso(Cookie cookie, string rol)
+        {
+            SessionManager sessionManager = new SessionManager();
+            if (sessionManager.ValidarCookie(cookie))
+            {
+                var usuario = ObtenerUsuario(cookie.Name);
+                if (usuario != null)
+                {
+                    return usuario.Rol.Nombre == rol;
+
+                }
+                else
+                {
+                    throw new UnauthorizedAccessException("Usuario no encontrado.");
+                }
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Acceso no autorizado.");
+            }
+        }
     }
 }

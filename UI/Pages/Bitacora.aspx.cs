@@ -3,10 +3,11 @@ using System;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using UI.Pages;
 
 namespace UI
 {
-    public partial class Bitacora : Page
+    public partial class Bitacora : Page,ISecurePage
     {
         private static readonly BitacoraService BitacoraService = new BitacoraService();
 
@@ -15,7 +16,11 @@ namespace UI
             get { return (ViewState["Busqueda"] as string) ?? string.Empty; }
             set { ViewState["Busqueda"] = value; }
         }
-
+        public bool ValidarAcceso(string rol)
+        {
+            VerificadorAcceso verificador = new VerificadorAcceso();
+            return verificador.VerificarAcceso(rol);
+        }
         private int PaginaActual
         {
             get { return (int)(ViewState["Pagina"] ?? 1); }
@@ -38,11 +43,29 @@ namespace UI
         {
             if (!IsPostBack)
             {
-                TxtBusqueda.Text = string.Empty;
-                DdlTamanio.SelectedValue = "10";
-                PaginaActual = 1;
-                TamanioPagina = 10;
-                CargarEventos();
+                try
+                {
+                    if(!ValidarAcceso("WebMaster"))
+                    {
+                        Session["ErrorMsg"] = "No tienes permisos para acceder a esta página.";
+                        Response.Redirect("Default.aspx");
+                        return;
+                    }
+                    TxtBusqueda.Text = string.Empty;
+                    DdlTamanio.SelectedValue = "10";
+                    PaginaActual = 1;
+                    TamanioPagina = 10;
+                    CargarEventos();
+                }
+                catch(ArgumentException ex)
+                {
+                    WebMessageBox.Show(this,$"Error:{ex.Message}");
+                }
+                catch(UnauthorizedAccessException ex)
+                {
+                    Response.Redirect("Default.aspx");
+                    WebMessageBox.Show(default, ex.Message);
+                }
             }
         }
 
