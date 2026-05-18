@@ -1,12 +1,13 @@
-﻿using System;
+﻿using BEL;
+using BEL.Constantes;
+using DAL.Repository.Usuarios;
+using Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
-using BEL;
-using Services;
-using DAL.Repository.Usuarios;
 namespace Business.Services.Usuarios
 {
     public class UsuarioService
@@ -43,7 +44,31 @@ namespace Business.Services.Usuarios
                 throw new UnauthorizedAccessException("Credenciales inválidas.");
             }
         }
-        public bool ValidarAcceso(Cookie cookie, string rol)
+        public bool ValidarAcceso(Cookie cookie, List<RolesEnum> roles)
+        {
+            if (roles is null || roles.Count == 0) return false;
+
+            SessionManager sessionManager = new SessionManager();
+            if (sessionManager.ValidarCookie(cookie))
+            {
+                var usuario = ObtenerUsuario(cookie.Name);
+                if (usuario != null)
+                {
+                    return roles.ToString().Contains(usuario.Rol.Nombre);
+
+                }
+                else
+                {
+                    throw new UnauthorizedAccessException("Usuario no encontrado.");
+                }
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Acceso no autorizado.");
+            }
+        }
+
+        public bool ValidarAcceso(Cookie cookie, RolesEnum rol)
         {
             SessionManager sessionManager = new SessionManager();
             if (sessionManager.ValidarCookie(cookie))
@@ -51,7 +76,7 @@ namespace Business.Services.Usuarios
                 var usuario = ObtenerUsuario(cookie.Name);
                 if (usuario != null)
                 {
-                    return usuario.Rol.Nombre == rol;
+                    return rol.ToString().Contains(usuario.Rol.Nombre);
 
                 }
                 else

@@ -1,5 +1,7 @@
+using BEL.Constantes;
 using Business.Services.Bitacora;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -16,7 +18,12 @@ namespace UI
             get { return (ViewState["Busqueda"] as string) ?? string.Empty; }
             set { ViewState["Busqueda"] = value; }
         }
-        public bool ValidarAcceso(string rol)
+        public bool ValidarAcceso(List<RolesEnum> roles)
+        {
+            VerificadorAcceso verificador = new VerificadorAcceso();
+            return verificador.VerificarAcceso(roles);
+        }
+        public bool ValidarAcceso(RolesEnum rol)
         {
             VerificadorAcceso verificador = new VerificadorAcceso();
             return verificador.VerificarAcceso(rol);
@@ -45,7 +52,7 @@ namespace UI
             {
                 try
                 {
-                    if(!ValidarAcceso("WebMaster"))
+                    if(!ValidarAcceso(RolesEnum.WEBMASTER))
                     {
                         Session["ErrorMsg"] = "No tienes permisos para acceder a esta página.";
                         Response.Redirect("Default.aspx");

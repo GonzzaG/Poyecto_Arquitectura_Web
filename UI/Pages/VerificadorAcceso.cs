@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Azure;
+using BEL.Constantes;
+using Business.Services.Usuarios;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Text.Json;
-using Business.Services.Usuarios;
 using System.Net;
-using Azure;
+using System.Text.Json;
+using System.Web;
 
 namespace UI.Pages
 {
@@ -18,10 +19,30 @@ namespace UI.Pages
             _usuarioService = new UsuarioService();
         }
 
-        public bool VerificarAcceso(string rol)
+        public bool VerificarAcceso(List<RolesEnum> rol)
         {
-            Cookie cookie = JsonSerializer.Deserialize<Cookie>(HttpContext.Current.Request.Cookies["AuthToken"].Value);
-            return _usuarioService.ValidarAcceso(cookie, rol);
+            try
+            {
+                Cookie cookie = JsonSerializer.Deserialize<Cookie>(HttpContext.Current.Request.Cookies["AuthToken"].Value);
+                return _usuarioService.ValidarAcceso(cookie, rol);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("No posee permisos para acceder a esta pagina", ex);
+            }
+        }
+
+        public bool VerificarAcceso(RolesEnum rol)
+        {
+            try
+            {
+                Cookie cookie = JsonSerializer.Deserialize<Cookie>(HttpContext.Current.Request.Cookies["AuthToken"].Value);
+                return _usuarioService.ValidarAcceso(cookie, rol);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("No posee permisos para acceder a esta pagina", ex);
+            }
         }
     }
 }
