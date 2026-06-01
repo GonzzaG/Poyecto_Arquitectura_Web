@@ -23,6 +23,46 @@ namespace UI {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// PnlPublicLinks control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel PnlPublicLinks;
+
+        /// <summary>
+        /// PnlUserSession control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel PnlUserSession;
+
+        /// <summary>
+        /// LblUsuarioLogueado control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label LblUsuarioLogueado;
+
+        /// <summary>
+        /// BtnCerrarSesion control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button BtnCerrarSesion;
+
+        /// <summary>
+        /// PnlPublicLinksMobile control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel PnlPublicLinksMobile;
+
+        /// <summary>
+        /// PnlUserSessionMobile control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel PnlUserSessionMobile;
+
+        /// <summary>
+        /// LblUsuarioLogueadoMobile control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label LblUsuarioLogueadoMobile;
+
+        /// <summary>
+        /// BtnCerrarSesionMobile control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button BtnCerrarSesionMobile;
+
+        /// <summary>
         /// MainContent control.
         /// </summary>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContent;

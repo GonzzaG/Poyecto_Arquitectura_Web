@@ -19,6 +19,9 @@
                     <asp:TextBox ID="Password" runat="server" TextMode="Password" CssClass="mt-2 block w-full rounded border border-slate-300 px-3 py-3 text-slate-950 shadow-sm transition placeholder:text-slate-400 focus:border-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-600/20" placeholder="••••••••" />
                 </div>
                 <asp:Button ID="SubmitLogin" runat="server" Text="Ingresar" OnClick="SubmitLogin_Click" CssClass="w-full rounded bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan-700" />
+                <asp:Panel ID="PanelLoginExitoso" runat="server" Visible="false" CssClass="rounded border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm font-semibold text-cyan-800">
+                    <asp:Label ID="LblLoginExitoso" runat="server" />
+                </asp:Panel>
             </div>
 
             <p class="mt-6 text-center text-sm text-slate-600">

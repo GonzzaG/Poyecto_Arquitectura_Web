@@ -5,5 +5,7 @@ namespace UI
         protected global::System.Web.UI.WebControls.TextBox Email;
         protected global::System.Web.UI.WebControls.TextBox Password;
         protected global::System.Web.UI.WebControls.Button SubmitLogin;
+        protected global::System.Web.UI.WebControls.Panel PanelLoginExitoso;
+        protected global::System.Web.UI.WebControls.Label LblLoginExitoso;
     }
 }

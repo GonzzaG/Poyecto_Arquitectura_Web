@@ -27,6 +27,18 @@ namespace Business.Services.Usuarios
         {
             return _usuarioRepository.ObtenerTodos();
         }
+
+        public Usuario ObtenerUsuarioAutenticado(Cookie cookie)
+        {
+            var sessionManager = new SessionManager();
+            if (cookie == null || !sessionManager.ValidarCookie(cookie))
+            {
+                return null;
+            }
+
+            return ObtenerUsuario(cookie.Name);
+        }
+
         public Cookie Login(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))

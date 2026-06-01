@@ -2,10 +2,10 @@ using System;
 using System.Net;
 using System.Web;
 using System.Web.UI;
+using BEL;
 using BEL.DTOs.Bitacora;
 using Business.Services.Bitacora;
 using Business.Services.Usuarios;
-using Microsoft.Ajax.Utilities;
 using System.Text.Json;
 
 namespace UI
@@ -41,10 +41,23 @@ namespace UI
                     HttpOnly = true,
                     Secure = Request.IsSecureConnection,
                     Expires = session.Expires,
+                    Path = string.IsNullOrWhiteSpace(Request.ApplicationPath) ? "/" : Request.ApplicationPath
                 };
                 HttpContext.Current.Response.Cookies.Clear();
                 Response.Cookies.Add(authCookie);
-                Response.Redirect("Default.aspx"); // Limpiar el formulario para evitar que los datos queden en memoria
+
+                GuardarUsuarioEnSesion(Email.Text.Trim());
+                Password.Text = string.Empty;
+                SubmitLogin.Enabled = false;
+                LblLoginExitoso.Text = "Ingreso correcto. Te estamos redirigiendo al inicio...";
+                PanelLoginExitoso.Visible = true;
+
+                ScriptManager.RegisterStartupScript(
+                    this,
+                    GetType(),
+                    "loginExitosoRedirect",
+                    "setTimeout(function(){ window.location.href = '" + ResolveUrl("~/") + "'; }, 900);",
+                    true);
             }
             catch (Exception ex)
             {
@@ -63,6 +76,21 @@ namespace UI
                 // Mostrar mensaje de error al usuario
                 WebMessageBox.Show(this, "Ocurrió un error al intentar iniciar sesión. Por favor, inténtelo de nuevo más tarde.");
             }
+        }
+
+        private void GuardarUsuarioEnSesion(string email)
+        {
+            Usuario usuario = UsuarioService.ObtenerUsuario(email);
+            if (usuario == null)
+            {
+                return;
+            }
+
+            Session["IdUsuario"] = usuario.IdUsuario;
+            Session["UsuarioId"] = usuario.IdUsuario;
+            Session["UsuarioEmail"] = usuario.Email;
+            Session["Email"] = usuario.Email;
+            Session["UsuarioNombre"] = string.IsNullOrWhiteSpace(usuario.Nombre) ? usuario.Email : usuario.Nombre;
         }
     }
 }
