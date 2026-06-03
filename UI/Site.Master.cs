@@ -4,7 +4,9 @@ using System.Text.Json;
 using System.Web;
 using System.Web.UI;
 using BEL;
+using BEL.Constantes;
 using Business.Services.Usuarios;
+using System.Collections.Generic;
 
 namespace UI
 {
@@ -41,48 +43,67 @@ namespace UI
 
         private void ActualizarEstadoSesion()
         {
-            string nombreUsuario = ObtenerNombreUsuarioLogueado();
-            bool autenticado = !string.IsNullOrWhiteSpace(nombreUsuario);
+            Usuario usuario = ObtenerUsuarioAutenticado();
+            RolesEnum? rol = usuario != null ? (RolesEnum?)usuario.IdRol : null;
 
-            PnlPublicLinks.Visible = !autenticado;
-            PnlPublicLinksMobile.Visible = !autenticado;
-            PnlUserSession.Visible = autenticado;
-            PnlUserSessionMobile.Visible = autenticado;
+            AplicarVisibilidadPorRol(rol);
 
-            if (autenticado)
+            if (usuario != null)
             {
-                LblUsuarioLogueado.Text = nombreUsuario;
-                LblUsuarioLogueadoMobile.Text = nombreUsuario;
+                string nombre = string.IsNullOrWhiteSpace(usuario.Nombre) ? usuario.Email : usuario.Nombre;
+                LblUsuarioLogueado.Text = nombre;
+                LblUsuarioLogueadoMobile.Text = nombre;
             }
         }
 
-        private string ObtenerNombreUsuarioLogueado()
+        private void AplicarVisibilidadPorRol(RolesEnum? rol)
         {
-            string nombreSesion = Session["UsuarioNombre"] as string;
-            if (!string.IsNullOrWhiteSpace(nombreSesion))
+            // null = visible solo para usuarios no autenticados
+            // RolesEnum = nivel mínimo de rol requerido
+            var controles = new Dictionary<System.Web.UI.Control, RolesEnum?>
             {
-                return nombreSesion;
-            }
+                { PnlPublicLinks,       null                    },
+                { PnlPublicLinksMobile, null                    },
+                { PnlUserSession,       RolesEnum.CLIENTE       },
+                { PnlUserSessionMobile, RolesEnum.CLIENTE       },
+                { LnkBitacora,          RolesEnum.WEBMASTER     },
+                { LnkBitacoraMobile,    RolesEnum.WEBMASTER     },
+            };
 
+            foreach (var entry in controles)
+            {
+                entry.Key.Visible = entry.Value == null
+                    ? !rol.HasValue
+                    : rol.HasValue && NivelAcceso(rol.Value) >= NivelAcceso(entry.Value.Value);
+            }
+        }
+
+        private static int NivelAcceso(RolesEnum rol)
+        {
+            switch (rol)
+            {
+                case RolesEnum.CLIENTE:         return 1;
+                case RolesEnum.ADM_OPERACIONES: return 2;
+                case RolesEnum.WEBMASTER:       return 3;
+                default:                        return 0;
+            }
+        }
+
+        private Usuario ObtenerUsuarioAutenticado()
+        {
             HttpCookie authToken = Request.Cookies["AuthToken"];
             if (authToken == null || string.IsNullOrWhiteSpace(authToken.Value))
-            {
                 return null;
-            }
 
             try
             {
                 Cookie cookie = JsonSerializer.Deserialize<Cookie>(authToken.Value);
                 if (cookie == null || string.IsNullOrWhiteSpace(cookie.Name))
-                {
                     return null;
-                }
 
                 Usuario usuario = _usuarioService.ObtenerUsuarioAutenticado(cookie);
                 if (usuario == null)
-                {
                     return null;
-                }
 
                 Session["IdUsuario"] = usuario.IdUsuario;
                 Session["UsuarioId"] = usuario.IdUsuario;
@@ -90,7 +111,7 @@ namespace UI
                 Session["Email"] = usuario.Email;
                 Session["UsuarioNombre"] = string.IsNullOrWhiteSpace(usuario.Nombre) ? usuario.Email : usuario.Nombre;
 
-                return Session["UsuarioNombre"] as string;
+                return usuario;
             }
             catch
             {

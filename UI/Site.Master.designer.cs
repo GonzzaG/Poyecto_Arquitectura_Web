@@ -24,6 +24,16 @@ namespace UI
         protected global::System.Web.UI.WebControls.ContentPlaceHolder HeadContent;
 
         /// <summary>
+        /// Control LnkBitacora.
+        /// </summary>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBitacora;
+
+        /// <summary>
+        /// Control LnkBitacoraMobile.
+        /// </summary>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBitacoraMobile;
+
+        /// <summary>
         /// Control PnlPublicLinks.
         /// </summary>
         protected global::System.Web.UI.WebControls.Panel PnlPublicLinks;

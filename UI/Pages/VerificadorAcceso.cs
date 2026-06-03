@@ -34,10 +34,21 @@ namespace UI.Pages
 
         public bool VerificarAcceso(RolesEnum rol)
         {
+            bool accesoValildo=false;
             try
             {
-                Cookie cookie = JsonSerializer.Deserialize<Cookie>(HttpContext.Current.Request.Cookies["AuthToken"].Value);
-                return _usuarioService.ValidarAcceso(cookie, rol);
+                HttpCookie httpCookie = HttpContext.Current.Request.Cookies["AuthToken"];
+                if (httpCookie != null)
+                {
+                    string cookieValue = httpCookie.Value;
+                    if (!string.IsNullOrEmpty(cookieValue))
+                    {
+                        Cookie cookie = JsonSerializer.Deserialize<Cookie>(cookieValue);
+
+                        accesoValildo = _usuarioService.ValidarAcceso(cookie, rol);
+                    }
+                }
+                return accesoValildo;
             }
             catch (Exception ex)
             {
