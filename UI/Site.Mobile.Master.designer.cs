@@ -23,6 +23,16 @@ namespace UI {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// LnkBitacora control.
+        /// </summary>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBitacora;
+
+        /// <summary>
+        /// LnkBitacoraMobile control.
+        /// </summary>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBitacoraMobile;
+
+        /// <summary>
         /// PnlPublicLinks control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Panel PnlPublicLinks;
