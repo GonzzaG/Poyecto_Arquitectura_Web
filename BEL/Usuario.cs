@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace BEL
@@ -10,6 +11,8 @@ namespace BEL
         public string Password { get; set; }
         public string Nombre { get; set; }
         public bool Inactivo { get; set; }
+        public int IntentosFallidos { get; set; }
+        public DateTime? FechaBloqueo { get; set; }
 
         public virtual Rol Rol { get; set; }
         public virtual ICollection<Pedido> Pedidos { get; set; }

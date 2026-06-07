@@ -42,18 +42,41 @@ namespace Business.Services.Usuarios
         public Cookie Login(string email, string password)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-            {
                 throw new ArgumentException("El email y la contraseña no pueden estar vacíos.");
-            }
+
             var usuario = ObtenerUsuario(email);
-            if (usuario != null)
-            {
-                var sessionManager = new SessionManager();
-                return sessionManager.Login(email, password, usuario.Password);
-            }
-            else
-            {
+            if (usuario == null)
                 throw new UnauthorizedAccessException("Credenciales inválidas.");
+
+            if (usuario.FechaBloqueo.HasValue && usuario.FechaBloqueo.Value > DateTime.Now)
+                throw new InvalidOperationException($"Cuenta bloqueada por múltiples intentos fallidos. Intente nuevamente después de las {usuario.FechaBloqueo.Value:HH:mm:ss}.");
+
+            var sessionManager = new SessionManager();
+            try
+            {
+                Cookie cookie = sessionManager.Login(email, password, usuario.Password);
+                _usuarioRepository.ActualizarBloqueo(email, 0, null);
+                return cookie;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                int nuevosIntentos;
+                DateTime? nuevaFechaBloqueo;
+
+                // Bloqueo expirado: el primer intento fallido post-bloqueo reinicia el contador a 1
+                if (usuario.FechaBloqueo.HasValue && usuario.FechaBloqueo.Value <= DateTime.Now)
+                {
+                    nuevosIntentos = 1;
+                    nuevaFechaBloqueo = null;
+                }
+                else
+                {
+                    nuevosIntentos = usuario.IntentosFallidos + 1;
+                    nuevaFechaBloqueo = nuevosIntentos >= 3 ? DateTime.Now.AddMinutes(15) : (DateTime?)null;
+                }
+
+                _usuarioRepository.ActualizarBloqueo(email, nuevosIntentos, nuevaFechaBloqueo);
+                throw;
             }
         }
         public bool ValidarAcceso(Cookie cookie, List<RolesEnum> roles)
@@ -88,7 +111,7 @@ namespace Business.Services.Usuarios
                 var usuario = ObtenerUsuario(cookie.Name);
                 if (usuario != null)
                 {
-                    return rol.ToString().Contains(usuario.Rol.Nombre);
+                    return ((rol.ToString()).ToUpper()).Contains((usuario.Rol.Nombre).ToUpper());
 
                 }
                 else

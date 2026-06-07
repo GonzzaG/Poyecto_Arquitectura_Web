@@ -43,6 +43,8 @@ namespace DAL
             modelBuilder.Entity<Usuario>().Property(x => x.Password).HasColumnName("password").HasMaxLength(255).IsRequired();
             modelBuilder.Entity<Usuario>().Property(x => x.Nombre).HasColumnName("nombre").HasMaxLength(120).IsRequired();
             modelBuilder.Entity<Usuario>().Property(x => x.Inactivo).HasColumnName("inactivo");
+            modelBuilder.Entity<Usuario>().Property(x => x.IntentosFallidos).HasColumnName("intentos_fallidos");
+            modelBuilder.Entity<Usuario>().Property(x => x.FechaBloqueo).HasColumnName("fecha_bloqueo");
             modelBuilder.Entity<Usuario>().HasIndex(x => x.Email).IsUnique();
             modelBuilder.Entity<Usuario>()
                 .HasRequired(x => x.Rol)
