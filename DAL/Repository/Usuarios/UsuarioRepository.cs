@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BEL;
 
 namespace DAL.Repository.Usuarios
@@ -30,6 +28,20 @@ namespace DAL.Repository.Usuarios
             using (var context = new AppDbContext())
             {
                 return context.Usuarios.ToList();
+            }
+        }
+
+        public void ActualizarBloqueo(string email, int intentosFallidos, DateTime? fechaBloqueo)
+        {
+            using (var context = new AppDbContext())
+            {
+                var usuario = context.Usuarios.FirstOrDefault(u => u.Email == email);
+                if (usuario != null)
+                {
+                    usuario.IntentosFallidos = intentosFallidos;
+                    usuario.FechaBloqueo = fechaBloqueo;
+                    context.SaveChanges();
+                }
             }
         }
     }

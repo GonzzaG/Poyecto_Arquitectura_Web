@@ -47,6 +47,19 @@ namespace UI
                 Response.Cookies.Add(authCookie);
 
                 GuardarUsuarioEnSesion(Email.Text.Trim());
+
+                BitacoraService.RegistrarAccion(new BitacoraRegistroDto
+                {
+                    FechaUtc = DateTime.UtcNow,
+                    Modulo = "Autenticacion",
+                    Accion = "LoginExitoso",
+                    Resultado = "OK",
+                    Mensaje = "Inicio de sesión exitoso.",
+                    UsuarioEmail = Email.Text.Trim(),
+                    Url = Request?.RawUrl,
+                    Ip = Request?.UserHostAddress
+                });
+
                 Password.Text = string.Empty;
                 SubmitLogin.Enabled = false;
                 LblLoginExitoso.Text = "Ingreso correcto. Te estamos redirigiendo al inicio...";
@@ -58,6 +71,21 @@ namespace UI
                     "loginExitosoRedirect",
                     "setTimeout(function(){ window.location.href = '" + ResolveUrl("~/") + "'; }, 900);",
                     true);
+            }
+            catch (InvalidOperationException ex)
+            {
+                BitacoraService.RegistrarAccion(new BitacoraRegistroDto
+                {
+                    FechaUtc = DateTime.UtcNow,
+                    Modulo = "Autenticacion",
+                    Accion = "IntentoLogin",
+                    Resultado = "BLOQUEADO",
+                    Mensaje = ex.Message,
+                    UsuarioEmail = string.IsNullOrWhiteSpace(Email.Text) ? null : Email.Text.Trim(),
+                    Url = Request?.RawUrl,
+                    Ip = Request?.UserHostAddress
+                });
+                WebMessageBox.Show(this, ex.Message);
             }
             catch (Exception ex)
             {
@@ -73,7 +101,6 @@ namespace UI
                     Ip = Request?.UserHostAddress,
                     Exception = ex
                 });
-                // Mostrar mensaje de error al usuario
                 WebMessageBox.Show(this, "Ocurrió un error al intentar iniciar sesión. Por favor, inténtelo de nuevo más tarde.");
             }
         }
