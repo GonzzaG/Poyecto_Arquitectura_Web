@@ -1,5 +1,6 @@
 ﻿using BEL;
 using BEL.Constantes;
+using BEL.Exceptions;
 using DAL.Repository.Usuarios;
 using Services;
 using System;
@@ -76,7 +77,7 @@ namespace Business.Services.Usuarios
                 }
 
                 _usuarioRepository.ActualizarBloqueo(email, nuevosIntentos, nuevaFechaBloqueo);
-                throw;
+                throw new AppException("Contraseña incorrecta");
             }
         }
         public bool ValidarAcceso(Cookie cookie, List<RolesEnum> roles)

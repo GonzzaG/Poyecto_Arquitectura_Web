@@ -7,6 +7,7 @@ using BEL.DTOs.Bitacora;
 using Business.Services.Bitacora;
 using Business.Services.Usuarios;
 using System.Text.Json;
+using BEL.Exceptions;
 
 namespace UI
 {
@@ -71,6 +72,10 @@ namespace UI
                     "loginExitosoRedirect",
                     "setTimeout(function(){ window.location.href = '" + ResolveUrl("~/") + "'; }, 900);",
                     true);
+            }
+            catch(AppException ex)
+            {
+                WebMessageBox.Show(this, ex.Message);
             }
             catch (InvalidOperationException ex)
             {
