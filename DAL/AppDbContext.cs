@@ -7,10 +7,7 @@ namespace DAL
     {
         static AppDbContext()
         {
-            // Disable automatic initializer so migrations are not applied implicitly when the first
-            // DbContext instance is created (for example during login). Migrations will be run
-            // explicitly by the startup synchronization when the feature flag is enabled.
-            Database.SetInitializer<AppDbContext>(null);
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<AppDbContext, Migrations.Configuration>());
         }
 
         public AppDbContext() : base("name=DefaultConnection")
