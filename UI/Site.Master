@@ -1,5 +1,5 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="UI.SiteMaster" %>
-
+<%@ Register TagPrefix="uc" TagName="NotificationModal" Src="~/Controls/NotificationModal.ascx" %>
 <!DOCTYPE html>
 <html lang="es">
 <head runat="server">
@@ -14,6 +14,7 @@
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-950 antialiased">
     <form runat="server">
+        <uc:NotificationModal ID="AppModal" runat="server" />
         <asp:ScriptManager runat="server">
             <Scripts>
                 <asp:ScriptReference Name="MsAjaxBundle" />

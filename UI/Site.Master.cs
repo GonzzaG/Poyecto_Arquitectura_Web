@@ -118,5 +118,23 @@ namespace UI
                 return null;
             }
         }
+
+        private Controls.NotificationModal Modal => AppModal;
+
+        /// <summary>Solo X para cerrar. Sin botones.</summary>
+        public void ShowError(string message, string title = "Ocurrió un error")
+            => Modal.ShowError(message, title);
+
+        /// <summary>Un botón "Aceptar" verde.</summary>
+        public void ShowSuccess(string message, string title = "Operación exitosa")
+            => Modal.ShowSuccess(message, title);
+
+        /// <summary>Un botón "Aceptar" azul.</summary>
+        public void ShowInfo(string message, string title = "Información")
+            => Modal.ShowInfo(message, title);
+
+        /// <summary>Dos botones: "Cancelar" + acción. Para confirmaciones.</summary>
+        public void ShowConfirm(string message, string title = "¿Estás seguro?", string confirmText = "Confirmar")
+            => Modal.ShowConfirm(message, title, confirmText);
     }
 }

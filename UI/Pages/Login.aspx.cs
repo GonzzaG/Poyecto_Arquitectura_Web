@@ -11,7 +11,7 @@ using BEL.Exceptions;
 
 namespace UI
 {
-    public partial class Login : Page
+    public partial class Login : BasePage
     {
         private static readonly BitacoraService BitacoraService = new BitacoraService();
         private readonly UsuarioService UsuarioService = new UsuarioService();
@@ -48,6 +48,7 @@ namespace UI
                 Response.Cookies.Add(authCookie);
 
                 GuardarUsuarioEnSesion(Email.Text.Trim());
+                ShowSuccess("Se inició sesión correctamente");
 
                 BitacoraService.RegistrarAccion(new BitacoraRegistroDto
                 {
@@ -75,7 +76,7 @@ namespace UI
             }
             catch(AppException ex)
             {
-                WebMessageBox.Show(this, ex.Message);
+                ShowError(ex.Message, "Ocurrió un error");
             }
             catch (InvalidOperationException ex)
             {
@@ -90,7 +91,8 @@ namespace UI
                     Url = Request?.RawUrl,
                     Ip = Request?.UserHostAddress
                 });
-                WebMessageBox.Show(this, ex.Message);
+
+                ShowError(ex.Message, "Ocurrió un error");
             }
             catch (Exception ex)
             {
@@ -106,7 +108,9 @@ namespace UI
                     Ip = Request?.UserHostAddress,
                     Exception = ex
                 });
-                WebMessageBox.Show(this, "Ocurrió un error al intentar iniciar sesión. Por favor, inténtelo de nuevo más tarde.");
+
+                ShowError("Ocurrió un error al intentar iniciar sesión. Por favor, inténtelo de nuevo más tarde.", "Ocurrió un error");
+
             }
         }
 
