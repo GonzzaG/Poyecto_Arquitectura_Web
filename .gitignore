@@ -264,8 +264,8 @@ ServiceFabricBackup/
 # Excepción: archivos del módulo de backups del proyecto
 !UI/Pages/BackupManagement.aspx
 !UI/Pages/BackupManagement.aspx.cs
-!BLL/DatabaseBackupService.cs
-!DAL/DatabaseBackupRepository.cs
+!Business/Services/Backup/DatabaseBackupService.cs
+!DAL/Repository/Backup/DatabaseBackupRepository.cs
 !BEL/DatabaseBackup.cs
 
 # SQL Server files
