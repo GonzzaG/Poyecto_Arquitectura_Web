@@ -22,6 +22,7 @@ namespace DAL
         public DbSet<Objeto> Objetos { get; set; }
 
         public DbSet<Sesion> Sesions { get; set; }
+        public DbSet<DatabaseBackup> DatabaseBackups { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -115,6 +116,20 @@ namespace DAL
             modelBuilder.Entity<Sesion>().Property(x => x.IdSession).HasColumnName("id_sesion").HasColumnType("uniqueidentifier").IsRequired().HasDatabaseGeneratedOption(DatabaseGeneratedOption.None) ;
             modelBuilder.Entity<Sesion>().Property(x => x.Email).HasColumnName("email").HasMaxLength(160);
             modelBuilder.Entity<Sesion>().Property(x => x.FechaCreacion).HasColumnName("fecha_creacion");
+
+            modelBuilder.Entity<DatabaseBackup>().ToTable("DATABASE_BACKUP");
+            modelBuilder.Entity<DatabaseBackup>().HasKey(x => x.Id);
+            modelBuilder.Entity<DatabaseBackup>().Property(x => x.Id).HasColumnName("id");
+            modelBuilder.Entity<DatabaseBackup>().Property(x => x.FileName).HasColumnName("file_name").HasMaxLength(260).IsRequired();
+            modelBuilder.Entity<DatabaseBackup>().Property(x => x.FilePath).HasColumnName("file_path").HasMaxLength(500).IsRequired();
+            modelBuilder.Entity<DatabaseBackup>().Property(x => x.FileSizeMB).HasColumnName("file_size_mb").HasPrecision(18, 2);
+            modelBuilder.Entity<DatabaseBackup>().Property(x => x.CreatedDate).HasColumnName("created_date").IsRequired();
+            modelBuilder.Entity<DatabaseBackup>().Property(x => x.CreatedByUserId).HasColumnName("created_by_user_id");
+            modelBuilder.Entity<DatabaseBackup>()
+                .HasRequired(x => x.CreatedByUser)
+                .WithMany()
+                .HasForeignKey(x => x.CreatedByUserId)
+                .WillCascadeOnDelete(false);
         }
     }
 }

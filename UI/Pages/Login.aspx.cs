@@ -127,6 +127,7 @@ namespace UI
             Session["UsuarioEmail"] = usuario.Email;
             Session["Email"] = usuario.Email;
             Session["UsuarioNombre"] = string.IsNullOrWhiteSpace(usuario.Nombre) ? usuario.Email : usuario.Nombre;
+            Session["UsuarioRol"] = usuario.Rol?.Nombre;
         }
     }
 }

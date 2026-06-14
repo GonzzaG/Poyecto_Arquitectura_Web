@@ -42,6 +42,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -72,7 +73,12 @@
     <Compile Include="Migrations\202606081836562_AgregarColumnaIntentos.Designer.cs">
       <DependentUpon>202606081836562_AgregarColumnaIntentos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202606132257113_AgregarBdBackup.cs" />
+    <Compile Include="Migrations\202606132257113_AgregarBdBackup.Designer.cs">
+      <DependentUpon>202606132257113_AgregarBdBackup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\Backup\DatabaseBackupRepository.cs" />
     <Compile Include="Repository\Sesiones\SesionRepository.cs" />
     <Compile Include="Repository\Usuarios\UsuarioRepository.cs" />
   </ItemGroup>
@@ -108,7 +114,11 @@
     <EmbeddedResource Include="Migrations\202606081836562_AgregarColumnaIntentos.resx">
       <DependentUpon>202606081836562_AgregarColumnaIntentos.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202606132257113_AgregarBdBackup.resx">
+      <DependentUpon>202606132257113_AgregarBdBackup.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>

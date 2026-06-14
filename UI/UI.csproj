@@ -248,6 +248,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="connectionStrings.config.example" />
+    <Content Include="Pages\BackupManagement.aspx" />
     <Content Include="README.md" />
     <None Include="connectionStrings.config" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
@@ -312,6 +313,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Modules\GlobalExceptionModule.cs" />
+    <Compile Include="Pages\BackupManagement.aspx.cs">
+      <DependentUpon>BackupManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\BackupManagement.aspx.designer.cs">
+      <DependentUpon>BackupManagement.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ISecurePage.cs" />
     <Compile Include="Pages\VerificadorAcceso.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
