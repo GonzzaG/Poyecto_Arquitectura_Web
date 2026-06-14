@@ -68,6 +68,8 @@ namespace UI
                 { PnlUserSessionMobile, RolesEnum.CLIENTE       },
                 { LnkBitacora,          RolesEnum.WEBMASTER     },
                 { LnkBitacoraMobile,    RolesEnum.WEBMASTER     },
+                { LnkBackup,            RolesEnum.WEBMASTER     },
+                { LnkBackupMobile,    RolesEnum.WEBMASTER     },
             };
 
             foreach (var entry in controles)

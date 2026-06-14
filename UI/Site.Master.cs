@@ -1,12 +1,13 @@
+using BEL;
+using BEL.Constantes;
+using Business.Helper;
+using Business.Services.Usuarios;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Text.Json;
 using System.Web;
 using System.Web.UI;
-using BEL;
-using BEL.Constantes;
-using Business.Services.Usuarios;
-using System.Collections.Generic;
 
 namespace UI
 {
@@ -68,6 +69,8 @@ namespace UI
                 { PnlUserSessionMobile, RolesEnum.CLIENTE       },
                 { LnkBitacora,          RolesEnum.WEBMASTER     },
                 { LnkBitacoraMobile,    RolesEnum.WEBMASTER     },
+                { LnkBackup,            RolesEnum.WEBMASTER     },
+                { LnkBackupMobile,      RolesEnum.WEBMASTER     },
             };
 
             foreach (var entry in controles)
@@ -80,13 +83,7 @@ namespace UI
 
         private static int NivelAcceso(RolesEnum rol)
         {
-            switch (rol)
-            {
-                case RolesEnum.CLIENTE:         return 1;
-                case RolesEnum.ADM_OPERACIONES: return 2;
-                case RolesEnum.WEBMASTER:       return 3;
-                default:                        return 0;
-            }
+            return AutenticacionHelper.NivelAcceso(rol);
         }
 
         private Usuario ObtenerUsuarioAutenticado()

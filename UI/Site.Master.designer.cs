@@ -42,6 +42,15 @@ namespace UI
         protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBitacora;
 
         /// <summary>
+        /// LnkBackup control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBackup;
+
+        /// <summary>
         /// PnlPublicLinks control.
         /// </summary>
         /// <remarks>
@@ -85,6 +94,15 @@ namespace UI
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBitacoraMobile;
+
+        /// <summary>
+        /// LnkBackupMobile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBackupMobile;
 
         /// <summary>
         /// PnlPublicLinksMobile control.

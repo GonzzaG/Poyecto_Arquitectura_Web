@@ -1,10 +1,14 @@
 ﻿using BEL;
 using BEL.Constantes;
+using Business.Helper;
 using Business.Services.Backup;
+using Business.Services.Usuarios;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text.Json;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -14,6 +18,7 @@ namespace UI.Pages
     public partial class BackupManagement : Page
     {
         private readonly DatabaseBackupService _backupService = new DatabaseBackupService();
+        private readonly UsuarioService _usuarioService = new UsuarioService();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -22,14 +27,11 @@ namespace UI.Pages
             {
                 MostrarMensaje("Acceso denegado. Solo los usuarios con rol WebMaster pueden acceder a esta sección.", esError: true);
                 btnGenerarBackup.Visible = false;
-                CargarGrilla(); // mostrar grilla vacía/bloqueada
                 return;
             }
 
             if (!IsPostBack)
-            {
                 CargarGrilla();
-            }
         }
 
         private void CargarGrilla()
@@ -46,11 +48,16 @@ namespace UI.Pages
 
         private void MostrarMensaje(string texto, bool esError)
         {
-            pnlMensaje.Visible = true;
-            string style = esError
-                ? "background:#fef2f2; color:#991b1b; border:1px solid #fecaca; border-radius:0.5rem; padding:0.75rem 1rem; font-size:0.875rem; font-weight:500;"
-                : "background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; border-radius:0.5rem; padding:0.75rem 1rem; font-size:0.875rem; font-weight:500;";
-            lblMensaje.Text = $"<div style=\"{style}\">{HttpUtility.HtmlEncode(texto)}</div>";
+            var rol = Session["UsuarioRol"] as string;
+            if(rol != RolesEnum.WEBMASTER.ToString())
+            {
+                pnlMensaje.Visible = true;
+                string style = esError
+                    ? "background:#fef2f2; color:#991b1b; border:1px solid #fecaca; border-radius:0.5rem; padding:0.75rem 1rem; font-size:0.875rem; font-weight:500;"
+                    : "background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; border-radius:0.5rem; padding:0.75rem 1rem; font-size:0.875rem; font-weight:500;";
+                lblMensaje.Text = $"<div style=\"{style}\">{HttpUtility.HtmlEncode(texto)}</div>";
+            }
+           
         }
 
         protected void lbDescargar_Command(object sender, CommandEventArgs e)
@@ -84,7 +91,6 @@ namespace UI.Pages
             {
                 int userId = ObtenerUsuarioId();
                 DatabaseBackup backup = _backupService.GenerarBackup(userId);
-
                 MostrarMensaje($"Backup generado correctamente: {backup.FileName} ({backup.FileSizeMB} MB)", esError: false);
                 CargarGrilla();
             }
@@ -116,18 +122,20 @@ namespace UI.Pages
             }
         }
 
-        private bool UsuarioTieneRol(RolesEnum nombreRol)
+        private bool UsuarioTieneRol(RolesEnum rol)
         {
-            var rolNombre = Session["UsuarioRol"] as string;
-            return rolNombre == nombreRol.ToString();
+            Usuario usuario = AutenticacionHelper.ObtenerUsuarioDesdeCookie(_usuarioService);
+            if (usuario == null) return false;
+            return AutenticacionHelper.NivelAcceso((RolesEnum)usuario.IdRol)
+                   >= AutenticacionHelper.NivelAcceso(rol);
         }
 
         private int ObtenerUsuarioId()
         {
-            var id = Session["IdUsuario"];
-            if (id == null)
-                throw new InvalidOperationException("No se encontró el usuario en sesión.");
-            return (int)id;
+            Usuario usuario = AutenticacionHelper.ObtenerUsuarioDesdeCookie(_usuarioService);
+            if (usuario == null)
+                throw new InvalidOperationException("No se encontró el usuario autenticado.");
+            return usuario.IdUsuario;
         }
     }
 }

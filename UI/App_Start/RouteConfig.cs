@@ -13,6 +13,8 @@ namespace UI
             routes.MapPageRoute("Login", "Login", "~/Pages/Login.aspx");
             routes.MapPageRoute("Registro", "Registro", "~/Pages/Registro.aspx");
             routes.MapPageRoute("Bitacora", "Bitacora", "~/Pages/Bitacora.aspx");
+            routes.MapPageRoute("Backup", "Backup", "~/Pages/BackupManagement.aspx");
+
             var settings = new FriendlyUrlSettings();
             settings.AutoRedirectMode = RedirectMode.Permanent;
             routes.EnableFriendlyUrls(settings);

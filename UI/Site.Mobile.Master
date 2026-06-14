@@ -1,4 +1,4 @@
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Mobile.master.cs" Inherits="UI.Site_Mobile" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Mobile.master.cs" Inherits="UI.Site_Mobile" %>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -52,6 +52,7 @@
                     <div class="hidden items-center gap-2 text-sm font-semibold text-slate-600 md:flex">
                         <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
                         <a ID="LnkBitacora" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
+                        <a id="LnkBackup" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="/Pages/BackupManagement.aspx" visible="false">Backups</a>
                         <asp:Panel ID="PnlPublicLinks" runat="server" CssClass="flex items-center gap-2">
                             <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Login">Login</a>
                             <a class="rounded bg-slate-950 px-4 py-2 text-white transition hover:bg-cyan-700" runat="server" href="~/Registro">Registro</a>
@@ -67,6 +68,7 @@
                     <div class="flex flex-col gap-1">
                         <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
                         <a ID="LnkBitacoraMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
+                        <a id="LnkBackupMobile" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="/Pages/BackupManagement.aspx" visible="false">Backups</a>
                         <asp:Panel ID="PnlPublicLinksMobile" runat="server" CssClass="flex flex-col gap-1">
                             <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Login">Login</a>
                             <a class="rounded bg-slate-950 px-3 py-3 text-white transition hover:bg-cyan-700" runat="server" href="~/Registro">Registro</a>

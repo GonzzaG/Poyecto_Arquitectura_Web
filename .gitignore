@@ -261,6 +261,13 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
+# Excepción: archivos del módulo de backups del proyecto
+!UI/Pages/BackupManagement.aspx
+!UI/Pages/BackupManagement.aspx.cs
+!BLL/DatabaseBackupService.cs
+!DAL/DatabaseBackupRepository.cs
+!BEL/DatabaseBackup.cs
+
 # SQL Server files
 *.mdf
 *.ldf
