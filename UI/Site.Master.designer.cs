@@ -69,6 +69,15 @@ namespace UI
         protected global::System.Web.UI.WebControls.Panel PnlUserSession;
 
         /// <summary>
+        /// LblAvatar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblAvatar;
+
+        /// <summary>
         /// LblUsuarioLogueado control.
         /// </summary>
         /// <remarks>
@@ -76,6 +85,24 @@ namespace UI
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label LblUsuarioLogueado;
+
+        /// <summary>
+        /// LblDropdownNombre control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblDropdownNombre;
+
+        /// <summary>
+        /// LblDropdownEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblDropdownEmail;
 
         /// <summary>
         /// BtnCerrarSesion control.

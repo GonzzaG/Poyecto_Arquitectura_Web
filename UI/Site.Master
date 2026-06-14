@@ -12,6 +12,24 @@
     <link href="<%: ResolveUrl("~/Content/Site.css") %>" rel="stylesheet" type="text/css" />
     <link href="<%: ResolveUrl("~/favicon.ico") %>" rel="shortcut icon" type="image/x-icon" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+    <script>
+        function togglePerfilDesktop() {
+            var d = document.getElementById('dropdownDesktop');
+            var c = document.getElementById('chevronDesktop');
+            var open = d.style.display === 'block';
+            d.style.display = open ? 'none' : 'block';
+            c.style.transform = open ? '' : 'rotate(180deg)';
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#dropdownDesktop') && !e.target.closest('[onclick="togglePerfilDesktop()"]')) {
+                var d = document.getElementById('dropdownDesktop');
+                var c = document.getElementById('chevronDesktop');
+                if (d) { d.style.display = 'none'; }
+                if (c) { c.style.transform = ''; }
+            }
+        });
+    </script>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-950 antialiased">
     <form runat="server">
@@ -33,7 +51,7 @@
         </asp:ScriptManager>
 
         <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-            <nav class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8" aria-label="Navegaci&oacute;n principal">
+            <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Navegaci&oacute;n principal">
                 <div class="flex min-h-16 items-center justify-between gap-4">
                     <a class="flex min-w-0 items-center gap-3 text-lg font-bold tracking-tight text-slate-950" runat="server" href="~/">
                         <img class="h-10 w-10 shrink-0 rounded object-contain" src="~/Content/images/logo.png" alt="GestClima" runat="server" />
@@ -53,17 +71,38 @@
 
                     <div class="hidden items-center gap-2 text-sm font-semibold text-slate-600 md:flex">
                         <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
+                        <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/Catalogo">Catálogo</a>
                         <a id="LnkBitacora" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
                         <a id="LnkBackup" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="/Pages/BackupManagement.aspx" visible="false">Backups</a>
 
                         <asp:Panel ID="PnlPublicLinks" runat="server" CssClass="flex items-center gap-2">
                             <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Login">Login</a>
+                            <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/Catalogo">Catálogo</a>
                             <a class="rounded bg-slate-950 px-4 py-2 text-white transition hover:bg-cyan-700" runat="server" href="~/Registro">Registro</a>
+
                         </asp:Panel>
-                        <asp:Panel ID="PnlUserSession" runat="server" Visible="false" CssClass="flex items-center gap-3 rounded border border-slate-200 bg-slate-50 px-3 py-2">
-                            <asp:Label ID="LblUsuarioLogueado" runat="server" CssClass="max-w-xs truncate text-sm font-semibold text-slate-700" />
-                            <asp:Button ID="BtnCerrarSesion" runat="server" Text="Cerrar sesion" OnClick="BtnCerrarSesion_Click" CssClass="rounded bg-slate-950 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-cyan-700" />
-                        </asp:Panel>
+                        <asp:Panel ID="PnlUserSession" runat="server" Visible="false" CssClass="relative">
+                            <button type="button" onclick="togglePerfilDesktop()"
+                                style="display: flex; align-items: center; gap: 8px; padding: 5px 10px 5px 5px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer; transition: background 0.12s;"
+                                onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+                                <div style="width: 28px; height: 28px; border-radius: 50%; background: #0F6E56; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; flex-shrink: 0;">
+                                    <asp:Label ID="LblAvatar" runat="server" />
+                                </div>
+                                <asp:Label ID="LblUsuarioLogueado" runat="server"
+                                    Style="font-size: 13px; font-weight: 600; color: #020617; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
+                                <span id="chevronDesktop" style="font-size: 12px; color: #64748b; transition: transform 0.15s;">▾</span>
+                            </button>
+                            <div id="dropdownDesktop" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); width: 210px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); z-index: 99;">
+                                <div style="padding: 12px 14px; border-bottom: 1px solid #f1f5f9;">
+                                    <asp:Label ID="LblDropdownNombre" runat="server" Style="display: block; font-size: 13px; font-weight: 600; color: #020617;" />
+                                    <asp:Label ID="LblDropdownEmail" runat="server" Style="display: block; font-size: 11px; color: #64748b; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
+                                </div>
+                                <asp:Button ID="BtnCerrarSesion" runat="server" Text="Cerrar sesión"
+                                    OnClick="BtnCerrarSesion_Click"
+                                    Style="display: flex; width: 100%; align-items: center; gap: 8px; padding: 10px 14px; font-size: 13px; font-weight: 500; color: #991b1b; background: none; border: none; cursor: pointer; text-align: left;"
+                                    onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='none'" />
+                            </div>
+                        </asp:Panel>    
                     </div>
                 </div>
 

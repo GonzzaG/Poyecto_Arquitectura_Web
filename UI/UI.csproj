@@ -249,6 +249,7 @@
     <Content Include="Global.asax" />
     <Content Include="connectionStrings.config.example" />
     <Content Include="Pages\BackupManagement.aspx" />
+    <Content Include="Pages\Catalogo.aspx" />
     <Content Include="README.md" />
     <None Include="connectionStrings.config" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
@@ -320,6 +321,13 @@
     <Compile Include="Pages\BackupManagement.aspx.designer.cs">
       <DependentUpon>BackupManagement.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Catalogo.aspx.cs">
+      <DependentUpon>Catalogo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Catalogo.aspx.designer.cs">
+      <DependentUpon>Catalogo.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ISecurePage.cs" />
     <Compile Include="Pages\VerificadorAcceso.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -376,6 +384,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Images\Productos\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

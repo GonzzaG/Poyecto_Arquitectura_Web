@@ -10,7 +10,7 @@ namespace BEL
         public string Descripcion { get; set; }
         public bool EsProducto { get; set; }
         public int Stock { get; set; }
-
+        public string ImagenUrl { get; set; }
         public virtual ICollection<DetallePedido> DetallesPedido { get; set; }
 
         public Objeto()

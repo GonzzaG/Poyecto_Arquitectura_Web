@@ -11,6 +11,24 @@
     <link href="<%: ResolveUrl("~/Content/Site.css") %>" rel="stylesheet" type="text/css" />
     <link href="<%: ResolveUrl("~/favicon.ico") %>" rel="shortcut icon" type="image/x-icon" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+    <script>
+        function togglePerfilDesktop() {
+            var d = document.getElementById('dropdownDesktop');
+            var c = document.getElementById('chevronDesktop');
+            var open = d.style.display === 'block';
+            d.style.display = open ? 'none' : 'block';
+            c.style.transform = open ? '' : 'rotate(180deg)';
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#dropdownDesktop') && !e.target.closest('[onclick="togglePerfilDesktop()"]')) {
+                var d = document.getElementById('dropdownDesktop');
+                var c = document.getElementById('chevronDesktop');
+                if (d) { d.style.display = 'none'; }
+                if (c) { c.style.transform = ''; }
+            }
+        });
+    </script>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-950 antialiased">
     <form id="form1" runat="server">
@@ -51,7 +69,7 @@
 
                     <div class="hidden items-center gap-2 text-sm font-semibold text-slate-600 md:flex">
                         <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
-                        <a ID="LnkBitacora" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
+                        <a id="LnkBitacora" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
                         <a id="LnkBackup" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="/Pages/BackupManagement.aspx" visible="false">Backups</a>
                         <asp:Panel ID="PnlPublicLinks" runat="server" CssClass="flex items-center gap-2">
                             <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Login">Login</a>
@@ -67,16 +85,30 @@
                 <div id="main-navigation-mobile" class="border-t border-slate-200 py-3 text-sm font-semibold text-slate-700 md:hidden" data-menu-panel hidden>
                     <div class="flex flex-col gap-1">
                         <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
-                        <a ID="LnkBitacoraMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
+                        <a id="LnkBitacoraMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
                         <a id="LnkBackupMobile" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="/Pages/BackupManagement.aspx" visible="false">Backups</a>
                         <asp:Panel ID="PnlPublicLinksMobile" runat="server" CssClass="flex flex-col gap-1">
                             <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Login">Login</a>
                             <a class="rounded bg-slate-950 px-3 py-3 text-white transition hover:bg-cyan-700" runat="server" href="~/Registro">Registro</a>
                         </asp:Panel>
-                        <asp:Panel ID="PnlUserSessionMobile" runat="server" Visible="false" CssClass="mt-2 rounded border border-slate-200 bg-slate-50 p-3">
-                            <span class="block text-xs font-semibold uppercase tracking-wide text-cyan-700">Usuario</span>
-                            <asp:Label ID="LblUsuarioLogueadoMobile" runat="server" CssClass="mt-1 block break-all text-sm font-semibold text-slate-700" />
-                            <asp:Button ID="BtnCerrarSesionMobile" runat="server" Text="Cerrar sesion" OnClick="BtnCerrarSesion_Click" CssClass="mt-3 w-full rounded bg-slate-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700" />
+                        <asp:Panel ID="PnlUserSessionMobile" runat="server" Visible="false"
+                            CssClass="mt-2 rounded border border-slate-200 bg-slate-50 p-3">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: #0F6E56; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0;">
+                                    <asp:Label ID="LblAvatarMobile" runat="server" />
+                                </div>
+                                <div class="min-w-0">
+                                    <asp:Label ID="LblUsuarioLogueadoMobile" runat="server"
+                                        CssClass="block truncate text-sm font-semibold text-slate-950" />
+                                    <asp:Label ID="LblEmailMobile" runat="server"
+                                        CssClass="block truncate text-xs text-slate-500" />
+                                </div>
+                            </div>
+                            <asp:Button ID="BtnCerrarSesionMobile" runat="server" Text="Cerrar sesión"
+                                OnClick="BtnCerrarSesion_Click"
+                                CssClass="w-full rounded px-3 py-2 text-sm font-semibold transition"
+                                Style="background: none; border: 1px solid #e2e8f0; color: #991b1b; cursor: pointer;"
+                                onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='none'" />
                         </asp:Panel>
                     </div>
                 </div>

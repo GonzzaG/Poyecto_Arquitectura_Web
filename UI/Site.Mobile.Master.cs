@@ -51,9 +51,22 @@ namespace UI
             if (usuario != null)
             {
                 string nombre = string.IsNullOrWhiteSpace(usuario.Nombre) ? usuario.Email : usuario.Nombre;
-                LblUsuarioLogueado.Text = nombre;
+                string iniciales = ObtenerIniciales(nombre);
+
+                // Mobile
                 LblUsuarioLogueadoMobile.Text = nombre;
+                LblAvatarMobile.Text = iniciales;
+                LblEmailMobile.Text = usuario.Email;
             }
+        }
+
+        private string ObtenerIniciales(string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre)) return "?";
+            var partes = nombre.Trim().Split(' ');
+            if (partes.Length >= 2)
+                return $"{partes[0][0]}{partes[1][0]}".ToUpper();
+            return nombre.Substring(0, Math.Min(2, nombre.Length)).ToUpper();
         }
 
         private void AplicarVisibilidadPorRol(RolesEnum? rol)

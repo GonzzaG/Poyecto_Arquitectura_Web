@@ -110,6 +110,7 @@ namespace DAL
             modelBuilder.Entity<Objeto>().Property(x => x.Descripcion).HasColumnName("descripcion").HasMaxLength(600).IsRequired();
             modelBuilder.Entity<Objeto>().Property(x => x.EsProducto).HasColumnName("esProducto");
             modelBuilder.Entity<Objeto>().Property(x => x.Stock).HasColumnName("stock");
+            modelBuilder.Entity<Objeto>().Property(x => x.ImagenUrl).HasColumnName("imagen_url").HasMaxLength(260);
 
             modelBuilder.Entity<Sesion>().ToTable("SESION");
             modelBuilder.Entity<Sesion>().HasKey(x => x.IdSession);

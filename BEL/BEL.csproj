@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CarritoItem.cs" />
     <Compile Include="Constantes\RolesEnum.cs" />
     <Compile Include="Common\AppException.cs" />
     <Compile Include="DatabaseBackup.cs" />
