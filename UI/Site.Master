@@ -73,6 +73,8 @@
                         <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
                         <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/Catalogo">Catálogo</a>
                         <a id="LnkBitacora" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
+                        <a id="LnkIntegridad" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/IntegrityValidation.aspx" visible="false">Integridad</a>
+                        <a id="LnkMigraciones" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/ApplyMigrations.aspx" visible="false">Migraciones</a>
                         <a id="LnkBackup" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="/Pages/BackupManagement.aspx" visible="false">Backups</a>
 
                         <asp:Panel ID="PnlPublicLinks" runat="server" CssClass="flex items-center gap-2">
@@ -97,6 +99,11 @@
                                     <asp:Label ID="LblDropdownNombre" runat="server" Style="display: block; font-size: 13px; font-weight: 600; color: #020617;" />
                                     <asp:Label ID="LblDropdownEmail" runat="server" Style="display: block; font-size: 11px; color: #64748b; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" />
                                 </div>
+                                <asp:Button ID="BtnValidarIntegridad" runat="server" Text="Validar integridad"
+                                    OnClick="BtnValidarIntegridad_Click"
+                                    Style="display: flex; width: 100%; align-items: center; gap: 8px; padding: 10px 14px; font-size: 13px; font-weight: 500; color: #0369a1; background: none; border: none; cursor: pointer; text-align: left;"
+                                    onmouseover="this.style.background='#ecf0f1'" onmouseout="this.style.background='none'"
+                                    Visible="false" />
                                 <asp:Button ID="BtnCerrarSesion" runat="server" Text="Cerrar sesión"
                                     OnClick="BtnCerrarSesion_Click"
                                     Style="display: flex; width: 100%; align-items: center; gap: 8px; padding: 10px 14px; font-size: 13px; font-weight: 500; color: #991b1b; background: none; border: none; cursor: pointer; text-align: left;"
@@ -110,6 +117,8 @@
                     <div class="flex flex-col gap-1">
                         <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
                         <a id="LnkBitacoraMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
+                        <a id="LnkIntegridadMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/IntegrityValidation.aspx" visible="false">Integridad</a>
+                        <a id="LnkMigracionesMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/ApplyMigrations.aspx" visible="false">Migraciones</a>
                         <a id="LnkBackupMobile" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="/Pages/BackupManagement.aspx" visible="false">Backups</a>
                         <asp:Panel ID="PnlPublicLinksMobile" runat="server" CssClass="flex flex-col gap-1">
                             <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Login">Login</a>

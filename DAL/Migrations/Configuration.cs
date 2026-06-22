@@ -2,7 +2,7 @@ using System.Data.Entity.Migrations;
 
 namespace DAL.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<AppDbContext>
+    public sealed class Configuration : DbMigrationsConfiguration<AppDbContext>
     {
         public Configuration()
         {

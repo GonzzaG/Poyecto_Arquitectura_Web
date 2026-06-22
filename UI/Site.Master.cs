@@ -1,6 +1,7 @@
 using BEL;
 using BEL.Constantes;
 using Business.Helper;
+using Business.Services.Integrity;
 using Business.Services.Usuarios;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace UI
     public partial class SiteMaster : MasterPage
     {
         private readonly UsuarioService _usuarioService = new UsuarioService();
+        private readonly IntegrityValidationService _integrityService = new IntegrityValidationService();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -40,6 +42,19 @@ namespace UI
 
             Response.Redirect(ResolveUrl("~/Login"), false);
             Context.ApplicationInstance.CompleteRequest();
+        }
+
+        protected void BtnValidarIntegridad_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var usuariosReparados = _integrityService.ReparaIntegridad();
+                ShowSuccess($"Se repararon {usuariosReparados.Count} registros con dígitos verificadores inválidos.", "Integridad Validada");
+            }
+            catch (Exception ex)
+            {
+                ShowError("Error al validar integridad: " + ex.Message);
+            }
         }
 
         private void ActualizarEstadoSesion()
@@ -84,8 +99,13 @@ namespace UI
                 { PnlUserSessionMobile, RolesEnum.CLIENTE       },
                 { LnkBitacora,          RolesEnum.WEBMASTER     },
                 { LnkBitacoraMobile,    RolesEnum.WEBMASTER     },
+                { LnkIntegridad,        RolesEnum.WEBMASTER     },
+                { LnkIntegridadMobile,  RolesEnum.WEBMASTER     },
+                { LnkMigraciones,       RolesEnum.WEBMASTER     },
+                { LnkMigracionesMobile, RolesEnum.WEBMASTER     },
                 { LnkBackup,            RolesEnum.WEBMASTER     },
                 { LnkBackupMobile,      RolesEnum.WEBMASTER     },
+                { BtnValidarIntegridad, RolesEnum.WEBMASTER     },
             };
 
             foreach (var entry in controles)

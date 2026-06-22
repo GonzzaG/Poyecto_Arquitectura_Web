@@ -248,8 +248,10 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="connectionStrings.config.example" />
+    <Content Include="Pages\ApplyMigrations.aspx" />
     <Content Include="Pages\BackupManagement.aspx" />
     <Content Include="Pages\Catalogo.aspx" />
+    <Content Include="Pages\IntegrityValidation.aspx" />
     <Content Include="README.md" />
     <None Include="connectionStrings.config" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
@@ -314,6 +316,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Modules\GlobalExceptionModule.cs" />
+    <Compile Include="Pages\ApplyMigrations.aspx.cs">
+      <DependentUpon>ApplyMigrations.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\ApplyMigrations.aspx.designer.cs">
+      <DependentUpon>ApplyMigrations.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\BackupManagement.aspx.cs">
       <DependentUpon>BackupManagement.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -327,6 +336,13 @@
     </Compile>
     <Compile Include="Pages\Catalogo.aspx.designer.cs">
       <DependentUpon>Catalogo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\IntegrityValidation.aspx.cs">
+      <DependentUpon>IntegrityValidation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\IntegrityValidation.aspx.designer.cs">
+      <DependentUpon>IntegrityValidation.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\ISecurePage.cs" />
     <Compile Include="Pages\VerificadorAcceso.cs" />
@@ -405,6 +421,10 @@
     <ProjectReference Include="..\Business\Business.csproj">
       <Project>{c507ed25-455d-441d-b5b5-a6d4a4476beb}</Project>
       <Name>Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL\DAL.csproj">
+      <Project>{8b624838-7df1-4a2a-9345-e514b02e06c0}</Project>
+      <Name>DAL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

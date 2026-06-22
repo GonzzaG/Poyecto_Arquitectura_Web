@@ -43,6 +43,7 @@ namespace DAL
             modelBuilder.Entity<Usuario>().Property(x => x.Inactivo).HasColumnName("inactivo");
             modelBuilder.Entity<Usuario>().Property(x => x.IntentosFallidos).HasColumnName("intentos_fallidos");
             modelBuilder.Entity<Usuario>().Property(x => x.FechaBloqueo).HasColumnName("fecha_bloqueo");
+            modelBuilder.Entity<Usuario>().Property(x => x.DVH).HasColumnName("DVH");
             modelBuilder.Entity<Usuario>().HasIndex(x => x.Email).IsUnique();
             modelBuilder.Entity<Usuario>()
                 .HasRequired(x => x.Rol)

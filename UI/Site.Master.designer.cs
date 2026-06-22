@@ -51,6 +51,24 @@ namespace UI
         protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBackup;
 
         /// <summary>
+        /// LnkIntegridad control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkIntegridad;
+
+        /// <summary>
+        /// LnkMigraciones control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkMigraciones;
+
+        /// <summary>
         /// PnlPublicLinks control.
         /// </summary>
         /// <remarks>
@@ -114,6 +132,15 @@ namespace UI
         protected global::System.Web.UI.WebControls.Button BtnCerrarSesion;
 
         /// <summary>
+        /// BtnValidarIntegridad control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnValidarIntegridad;
+
+        /// <summary>
         /// LnkBitacoraMobile control.
         /// </summary>
         /// <remarks>
@@ -130,6 +157,24 @@ namespace UI
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkBackupMobile;
+
+        /// <summary>
+        /// LnkIntegridadMobile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkIntegridadMobile;
+
+        /// <summary>
+        /// LnkMigracionesMobile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkMigracionesMobile;
 
         /// <summary>
         /// PnlPublicLinksMobile control.

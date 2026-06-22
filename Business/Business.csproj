@@ -76,6 +76,7 @@
     <Compile Include="Services\Database\DatabaseMigrationService.cs" />
     <Compile Include="Services\Bitacora\BitacoraService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Integrity\IntegrityValidationService.cs" />
     <Compile Include="Services\Objeto\ObjetoService.cs" />
     <Compile Include="Services\Usuarios\UsuarioService.cs" />
   </ItemGroup>
