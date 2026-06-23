@@ -1,10 +1,12 @@
 ﻿using BEL;
 using BEL.Constantes;
 using BEL.Exceptions;
+using Business.Services.Integrity;
 using DAL.Repository.Usuarios;
 using Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -57,6 +59,8 @@ namespace Business.Services.Usuarios
             {
                 Cookie cookie = sessionManager.Login(email, password, usuario.Password);
                 _usuarioRepository.ActualizarBloqueo(email, 0, null);
+                ValidarIntegridadSiEstaHabilitado();
+
                 return cookie;
             }
             catch (UnauthorizedAccessException)
@@ -78,6 +82,41 @@ namespace Business.Services.Usuarios
 
                 _usuarioRepository.ActualizarBloqueo(email, nuevosIntentos, nuevaFechaBloqueo);
                 throw new AppException("Contraseña incorrecta");
+            }
+        }
+
+
+        private static void ValidarIntegridadSiEstaHabilitado()
+        {
+            try
+            {
+                // BREAKPOINT: Inicio de validación de integridad
+                var integrityService = new IntegrityValidationService();
+                // BREAKPOINT: Verificar si existen registros inválidos
+                if (integrityService.ExistenRegistrosInvalidos())
+                {
+                    // BREAKPOINT: Se encontraron registros inválidos
+                    Trace.TraceWarning("Se detectaron registros de usuario con dígitos verificadores inválidos. Se requiere ejecutar la reparación desde el panel de administración.");
+                }
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    errorMsg += " | Causa: " + ex.InnerException.Message;
+                }
+
+                // Log detallado del error
+                Trace.TraceError($"Error al validar integridad de datos: {errorMsg}");
+
+                // Si es error de migración, loguear instrucciones
+                if (errorMsg.Contains("DVH") && errorMsg.Contains("migración"))
+                {
+                    Trace.TraceWarning("INSTRUCCIÓN: Accede a /Pages/ApplyMigrations.aspx (como WEBMASTER) para aplicar las migraciones pendientes.");
+                }
+
+                throw ex;
             }
         }
         public bool ValidarAcceso(Cookie cookie, List<RolesEnum> roles)

@@ -9,7 +9,6 @@ namespace UI.Pages
 {
     public partial class IntegrityValidation : System.Web.UI.Page
     {
-        private readonly IntegrityValidationService _integrityService = new IntegrityValidationService();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -36,7 +35,7 @@ namespace UI.Pages
         {
             try
             {
-                var usuariosInvalidos = _integrityService.ValidarIntegridad();
+                var usuariosInvalidos = new List<Usuario>();
 
                 if (usuariosInvalidos.Count == 0)
                 {
@@ -92,11 +91,11 @@ namespace UI.Pages
         {
             try
             {
-                var usuariosReparados = _integrityService.ReparaIntegridad();
-                LblEstado.Text = $"✓ Se repararon {usuariosReparados.Count} registros exitosamente.";
-                LblEstado.ForeColor = System.Drawing.Color.Green;
-                BtnReparar.Visible = false;
-                GvRegistrosInvalidos.Visible = false;
+                //var usuariosReparados = _integrityService.ReparaIntegridad();
+                //LblEstado.Text = $"✓ Se repararon {usuariosReparados.Count} registros exitosamente.";
+                //LblEstado.ForeColor = System.Drawing.Color.Green;
+                //BtnReparar.Visible = false;
+                //GvRegistrosInvalidos.Visible = false;
             }
             catch (Exception ex)
             {

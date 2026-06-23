@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BEL;
+using BEL.Exceptions;
 using DAL;
 
 namespace Business.Services.Integrity
@@ -17,6 +19,13 @@ namespace Business.Services.Integrity
             {
                 // BREAKPOINT: Iniciando validación de integridad
                 var resultado = ValidarDVH.ValidarDVHTablaUsuarios();
+
+                if (resultado != null && resultado.Count > 0)
+                {
+
+                    var mensaje = string.Concat(resultado);
+                    throw new Exception("Los siguientes usuarios se encuentran corruptos: " + mensaje);
+                }
                 // BREAKPOINT: Validación completada - revisar resultado
                 return resultado;
             }
@@ -51,17 +60,20 @@ namespace Business.Services.Integrity
         /// <returns>True si hay registros inválidos, False en caso contrario</returns>
         public bool ExistenRegistrosInvalidos()
         {
-            try
+            // BREAKPOINT: Verificando si existen registros inválidos
+            var usuariosInvalidos = ValidarDVH.ValidarDVHTablaUsuarios();
+
+            if (usuariosInvalidos != null && usuariosInvalidos.Count > 0)
             {
-                // BREAKPOINT: Verificando si existen registros inválidos
-                var usuariosInvalidos = ValidarDVH.ValidarDVHTablaUsuarios();
-                // BREAKPOINT: Resultado de la verificación
-                return usuariosInvalidos.Count > 0;
+
+                var mensaje = string.Concat(usuariosInvalidos.Select(u => u.IdUsuario) + " ");
+
+                throw new AppException("Los siguientes usuarios se encuentran corruptos: " + mensaje);
             }
-            catch
-            {
-                return false;
-            }
+
+            // BREAKPOINT: Resultado de la verificación
+            return usuariosInvalidos.Count > 0;
+
         }
     }
 }
