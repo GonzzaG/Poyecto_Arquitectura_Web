@@ -20,6 +20,9 @@
                     <p class="text-sm text-slate-600">
                         <asp:Label ID="LblEstado" runat="server" Text="Validando integridad..." />
                     </p>
+                    <p class="mt-2 text-sm text-slate-600">
+                        <asp:Label ID="LblDVV" runat="server" Text="" />
+                    </p>
                 </div>
 
                 <div class="flex flex-col gap-2 sm:flex-row">

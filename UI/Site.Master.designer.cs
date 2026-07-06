@@ -167,6 +167,10 @@ namespace UI
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkIntegridadMobile;
 
+        protected global::System.Web.UI.WebControls.Panel PnlIntegrityWarning;
+
+        protected global::System.Web.UI.WebControls.Label LblIntegrityWarning;
+
         /// <summary>
         /// LnkMigracionesMobile control.
         /// </summary>

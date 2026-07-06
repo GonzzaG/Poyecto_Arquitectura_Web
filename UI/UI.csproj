@@ -252,6 +252,7 @@
     <Content Include="Pages\BackupManagement.aspx" />
     <Content Include="Pages\Catalogo.aspx" />
     <Content Include="Pages\IntegrityValidation.aspx" />
+    <Content Include="Pages\Mantenimiento.aspx" />
     <Content Include="README.md" />
     <None Include="connectionStrings.config" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
@@ -316,6 +317,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Modules\GlobalExceptionModule.cs" />
+    <Compile Include="Modules\MaintenanceModeModule.cs" />
     <Compile Include="Pages\ApplyMigrations.aspx.cs">
       <DependentUpon>ApplyMigrations.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -343,6 +345,13 @@
     </Compile>
     <Compile Include="Pages\IntegrityValidation.aspx.designer.cs">
       <DependentUpon>IntegrityValidation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Mantenimiento.aspx.cs">
+      <DependentUpon>Mantenimiento.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Mantenimiento.aspx.designer.cs">
+      <DependentUpon>Mantenimiento.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\ISecurePage.cs" />
     <Compile Include="Pages\VerificadorAcceso.cs" />

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 namespace Business.Services.Usuarios
 {
     public class UsuarioService
@@ -59,7 +60,7 @@ namespace Business.Services.Usuarios
             {
                 Cookie cookie = sessionManager.Login(email, password, usuario.Password);
                 _usuarioRepository.ActualizarBloqueo(email, 0, null);
-                ValidarIntegridadSiEstaHabilitado();
+                ValidarIntegridadEnLogin(usuario);
 
                 return cookie;
             }
@@ -86,17 +87,19 @@ namespace Business.Services.Usuarios
         }
 
 
-        private static void ValidarIntegridadSiEstaHabilitado()
+        private static void ValidarIntegridadEnLogin(Usuario usuario)
         {
             try
             {
-                // BREAKPOINT: Inicio de validación de integridad
                 var integrityService = new IntegrityValidationService();
-                // BREAKPOINT: Verificar si existen registros inválidos
-                if (integrityService.ExistenRegistrosInvalidos())
+                var estado = integrityService.ValidarEstadoIntegridad();
+                bool hayErrorIntegridad = !estado.EsValido;
+
+                EstablecerModoMantenimiento(hayErrorIntegridad);
+
+                if (hayErrorIntegridad)
                 {
-                    // BREAKPOINT: Se encontraron registros inválidos
-                    Trace.TraceWarning("Se detectaron registros de usuario con dígitos verificadores inválidos. Se requiere ejecutar la reparación desde el panel de administración.");
+                    Trace.TraceWarning($"Se detectó error de integridad en USUARIO. DVH inválidos: {estado.UsuariosConDVHInvalido.Count}. DVV registrado: {estado.DVVRegistrado}. DVV calculado: {estado.DVVCalculado}.");
                 }
             }
             catch (Exception ex)
@@ -116,7 +119,17 @@ namespace Business.Services.Usuarios
                     Trace.TraceWarning("INSTRUCCIÓN: Accede a /Pages/ApplyMigrations.aspx (como WEBMASTER) para aplicar las migraciones pendientes.");
                 }
 
-                throw ex;
+                EstablecerModoMantenimiento(true);
+                Trace.TraceError($"No se pudo validar integridad de datos: {errorMsg}");
+            }
+        }
+
+        private static void EstablecerModoMantenimiento(bool activo)
+        {
+            var context = HttpContext.Current;
+            if (context != null)
+            {
+                context.Application["IntegrityMaintenance"] = activo;
             }
         }
         public bool ValidarAcceso(Cookie cookie, List<RolesEnum> roles)

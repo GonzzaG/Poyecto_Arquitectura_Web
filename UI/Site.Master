@@ -134,6 +134,13 @@
             </nav>
         </header>
 
+        <asp:Panel ID="PnlIntegrityWarning" runat="server" Visible="false" CssClass="border-b border-orange-200 bg-orange-50">
+            <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 text-sm text-orange-900 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+                <asp:Label ID="LblIntegrityWarning" runat="server" Text="Se detecto un error de integridad en usuarios. Recalcula DVH/DVV desde Integridad." />
+                <a class="font-semibold text-orange-950 underline underline-offset-2" runat="server" href="~/Pages/IntegrityValidation.aspx">Abrir integridad</a>
+            </div>
+        </asp:Panel>
+
         <main role="main">
             <asp:ContentPlaceHolder ID="MainContent" runat="server" />
         </main>

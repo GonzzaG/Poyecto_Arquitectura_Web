@@ -11,6 +11,8 @@ namespace DAL
 {
     public class ValidarDVH
     {
+        private const string TablaUsuarios = "USUARIO";
+
         /// <summary>
         /// Calcula el dígito verificador horizontal para un registro de usuario.
         /// </summary>
@@ -108,6 +110,50 @@ namespace DAL
             return usuariosInvalidos;
         }
 
+        public static int CalcularDVVUsuarios()
+        {
+            using (AppDbContext context = new AppDbContext())
+            {
+                var usuarios = context.Usuarios
+                    .OrderBy(u => u.IdUsuario)
+                    .ToList();
+
+                return CalcularDVVUsuarios(usuarios);
+            }
+        }
+
+        public static bool ValidarDVVUsuarios()
+        {
+            using (AppDbContext context = new AppDbContext())
+            {
+                var usuarios = context.Usuarios
+                    .OrderBy(u => u.IdUsuario)
+                    .ToList();
+
+                if (usuarios.Any(u => !u.DVH.HasValue))
+                {
+                    return false;
+                }
+
+                int dvvCalculado = CalcularDVVUsuarios(usuarios);
+                var dvvRegistrado = context.DigitosVerificadoresVerticales
+                    .FirstOrDefault(d => d.Tabla == TablaUsuarios);
+
+                return dvvRegistrado != null && dvvRegistrado.Valor == dvvCalculado;
+            }
+        }
+
+        public static int ObtenerDVVRegistradoUsuarios()
+        {
+            using (AppDbContext context = new AppDbContext())
+            {
+                var dvvRegistrado = context.DigitosVerificadoresVerticales
+                    .FirstOrDefault(d => d.Tabla == TablaUsuarios);
+
+                return dvvRegistrado != null ? dvvRegistrado.Valor : -1;
+            }
+        }
+
         /// <summary>
         /// Repara los registros de usuarios con DVH inválido recalculando y actualizando los valores.
         /// </summary>
@@ -178,6 +224,56 @@ namespace DAL
             return usuariosReparados;
         }
 
+        public static List<Usuario> RepararDVHDVVUsuarios()
+        {
+            List<Usuario> usuariosReparados = new List<Usuario>();
+
+            try
+            {
+                using (AppDbContext context = new AppDbContext())
+                {
+                    var usuarios = context.Usuarios
+                        .OrderBy(u => u.IdUsuario)
+                        .ToList();
+
+                    foreach (var usuario in usuarios)
+                    {
+                        int dvhCalculado = CalcularDVH(usuario);
+                        if (!usuario.DVH.HasValue || usuario.DVH.Value != dvhCalculado)
+                        {
+                            usuario.DVH = dvhCalculado;
+                            usuariosReparados.Add(usuario);
+                        }
+                    }
+
+                    int dvvCalculado = CalcularDVVUsuarios(usuarios);
+                    var dvvRegistrado = context.DigitosVerificadoresVerticales
+                        .FirstOrDefault(d => d.Tabla == TablaUsuarios);
+
+                    if (dvvRegistrado == null)
+                    {
+                        context.DigitosVerificadoresVerticales.Add(new DigitoVerificadorVertical
+                        {
+                            Tabla = TablaUsuarios,
+                            Valor = dvvCalculado
+                        });
+                    }
+                    else
+                    {
+                        dvvRegistrado.Valor = dvvCalculado;
+                    }
+
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al reparar DVH/DVV de usuarios: " + ex.Message, ex);
+            }
+
+            return usuariosReparados;
+        }
+
         /// <summary>
         /// Recalcula y actualiza el DVH de un usuario específico.
         /// </summary>
@@ -195,6 +291,7 @@ namespace DAL
 
                     int dvhCalculado = CalcularDVH(usuario);
                     usuario.DVH = dvhCalculado;
+                    ActualizarDVVUsuarios(context);
                     context.SaveChanges();
 
                     return true;
@@ -246,6 +343,57 @@ namespace DAL
             int dvh = suma % 10;
 
             return dvh;
+        }
+
+        private static int CalcularDVVUsuarios(List<Usuario> usuarios)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var usuario in usuarios.OrderBy(u => u.IdUsuario))
+            {
+                int dvh = usuario.DVH.HasValue ? usuario.DVH.Value : CalcularDVH(usuario);
+                sb.Append(dvh.ToString());
+            }
+
+            return CalcularDVHDesdeString(sb.ToString());
+        }
+
+        public static void ActualizarDVHUsuario(AppDbContext context, Usuario usuario)
+        {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (usuario == null)
+                throw new ArgumentNullException(nameof(usuario));
+
+            usuario.DVH = CalcularDVH(usuario);
+            ActualizarDVVUsuarios(context);
+        }
+
+        public static void ActualizarDVVUsuarios(AppDbContext context)
+        {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
+            var usuarios = context.Usuarios
+                .OrderBy(u => u.IdUsuario)
+                .ToList();
+
+            int dvvCalculado = CalcularDVVUsuarios(usuarios);
+            var dvvRegistrado = context.DigitosVerificadoresVerticales
+                .FirstOrDefault(d => d.Tabla == TablaUsuarios);
+
+            if (dvvRegistrado == null)
+            {
+                context.DigitosVerificadoresVerticales.Add(new DigitoVerificadorVertical
+                {
+                    Tabla = TablaUsuarios,
+                    Valor = dvvCalculado
+                });
+            }
+            else
+            {
+                dvvRegistrado.Valor = dvvCalculado;
+            }
         }
     } 
 }

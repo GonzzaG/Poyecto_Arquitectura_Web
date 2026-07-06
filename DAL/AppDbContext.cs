@@ -20,6 +20,7 @@ namespace DAL
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<DetallePedido> DetallesPedido { get; set; }
         public DbSet<Objeto> Objetos { get; set; }
+        public DbSet<DigitoVerificadorVertical> DigitosVerificadoresVerticales { get; set; }
 
         public DbSet<Sesion> Sesions { get; set; }
         public DbSet<DatabaseBackup> DatabaseBackups { get; set; }
@@ -112,6 +113,13 @@ namespace DAL
             modelBuilder.Entity<Objeto>().Property(x => x.EsProducto).HasColumnName("esProducto");
             modelBuilder.Entity<Objeto>().Property(x => x.Stock).HasColumnName("stock");
             modelBuilder.Entity<Objeto>().Property(x => x.ImagenUrl).HasColumnName("imagen_url").HasMaxLength(260);
+
+            modelBuilder.Entity<DigitoVerificadorVertical>().ToTable("DIGITO_VERIFICADOR_VERTICAL");
+            modelBuilder.Entity<DigitoVerificadorVertical>().HasKey(x => x.Id);
+            modelBuilder.Entity<DigitoVerificadorVertical>().Property(x => x.Id).HasColumnName("id_dvv");
+            modelBuilder.Entity<DigitoVerificadorVertical>().Property(x => x.Tabla).HasColumnName("tabla").HasMaxLength(80).IsRequired();
+            modelBuilder.Entity<DigitoVerificadorVertical>().Property(x => x.Valor).HasColumnName("valor");
+            modelBuilder.Entity<DigitoVerificadorVertical>().HasIndex(x => x.Tabla).IsUnique();
 
             modelBuilder.Entity<Sesion>().ToTable("SESION");
             modelBuilder.Entity<Sesion>().HasKey(x => x.IdSession);

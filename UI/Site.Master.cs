@@ -49,7 +49,8 @@ namespace UI
             try
             {
                 var usuariosReparados = _integrityService.ReparaIntegridad();
-                ShowSuccess($"Se repararon {usuariosReparados.Count} registros con dígitos verificadores inválidos.", "Integridad Validada");
+                Application["IntegrityMaintenance"] = false;
+                ShowSuccess($"Se recalcularon DVH/DVV. Usuarios con DVH reparado: {usuariosReparados.Count}.", "Integridad Validada");
             }
             catch (Exception ex)
             {
@@ -63,6 +64,7 @@ namespace UI
             RolesEnum? rol = usuario != null ? (RolesEnum?)usuario.IdRol : null;
 
             AplicarVisibilidadPorRol(rol);
+            ActualizarAvisoIntegridad(rol);
 
             if (usuario != null)
             {
@@ -114,6 +116,14 @@ namespace UI
                     ? !rol.HasValue
                     : rol.HasValue && NivelAcceso(rol.Value) >= NivelAcceso(entry.Value.Value);
             }
+        }
+
+        private void ActualizarAvisoIntegridad(RolesEnum? rol)
+        {
+            bool mantenimiento = Application["IntegrityMaintenance"] is bool && (bool)Application["IntegrityMaintenance"];
+            bool esWebmaster = rol.HasValue && NivelAcceso(rol.Value) >= NivelAcceso(RolesEnum.WEBMASTER);
+
+            PnlIntegrityWarning.Visible = mantenimiento && esWebmaster;
         }
 
         private static int NivelAcceso(RolesEnum rol)
