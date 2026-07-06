@@ -82,6 +82,8 @@ namespace UI
                 { PnlPublicLinksMobile, null                    },
                 { PnlUserSession,       RolesEnum.CLIENTE       },
                 { PnlUserSessionMobile, RolesEnum.CLIENTE       },
+                { LnkCompras,           RolesEnum.ADM_OPERACIONES },
+                { LnkComprasMobile,     RolesEnum.ADM_OPERACIONES },
                 { LnkBitacora,          RolesEnum.WEBMASTER     },
                 { LnkBitacoraMobile,    RolesEnum.WEBMASTER     },
                 { LnkBackup,            RolesEnum.WEBMASTER     },
@@ -94,6 +96,9 @@ namespace UI
                     ? !rol.HasValue
                     : rol.HasValue && NivelAcceso(rol.Value) >= NivelAcceso(entry.Value.Value);
             }
+
+            LnkMisCompras.Visible = rol == RolesEnum.CLIENTE;
+            LnkMisComprasMobile.Visible = rol == RolesEnum.CLIENTE;
         }
 
         private static int NivelAcceso(RolesEnum rol)

@@ -250,7 +250,16 @@
     <Content Include="connectionStrings.config.example" />
     <Content Include="Pages\BackupManagement.aspx" />
     <Content Include="Pages\Catalogo.aspx" />
+    <Content Include="Pages\Checkout.aspx" />
+    <Content Include="Pages\Compras.aspx" />
+    <Content Include="Pages\MisCompras.aspx" />
     <Content Include="README.md" />
+    <Content Include="Images\Productos\compresor-scroll.png" />
+    <Content Include="Images\Productos\filtro-hepa.png" />
+    <Content Include="Images\Productos\split-inverter.png" />
+    <Content Include="Images\Productos\termostato-wifi.png" />
+    <Content Include="Images\Productos\unidad-condensadora.png" />
+    <Content Include="Images\Productos\ventilador-centrifugo.png" />
     <None Include="connectionStrings.config" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
@@ -327,6 +336,27 @@
     </Compile>
     <Compile Include="Pages\Catalogo.aspx.designer.cs">
       <DependentUpon>Catalogo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Checkout.aspx.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Checkout.aspx.designer.cs">
+      <DependentUpon>Checkout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Compras.aspx.cs">
+      <DependentUpon>Compras.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Compras.aspx.designer.cs">
+      <DependentUpon>Compras.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MisCompras.aspx.cs">
+      <DependentUpon>MisCompras.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\MisCompras.aspx.designer.cs">
+      <DependentUpon>MisCompras.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\ISecurePage.cs" />
     <Compile Include="Pages\VerificadorAcceso.cs" />
