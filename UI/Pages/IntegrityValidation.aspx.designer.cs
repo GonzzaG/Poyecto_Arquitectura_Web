@@ -5,7 +5,7 @@ namespace UI.Pages
         protected System.Web.UI.WebControls.Label LblEstado;
         protected System.Web.UI.WebControls.Label LblDVV;
         protected System.Web.UI.WebControls.Button BtnValidar;
-        protected System.Web.UI.WebControls.Button BtnReparar;
-        protected System.Web.UI.WebControls.GridView GvRegistrosInvalidos;
+        protected System.Web.UI.WebControls.LinkButton LnkRecalcularTodos;
+        protected System.Web.UI.WebControls.GridView GvUsuarios;
     }
 }

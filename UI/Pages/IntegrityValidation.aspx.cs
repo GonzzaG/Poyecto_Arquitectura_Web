@@ -15,6 +15,8 @@ namespace UI.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            MostrarBotonRecalcular();
+
             if (!IsPostBack)
             {
                 if (!ValidarAcceso())
@@ -26,6 +28,17 @@ namespace UI.Pages
 
                 CargarEstadoIntegridad();
             }
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            MostrarBotonRecalcular();
+            base.OnPreRender(e);
+        }
+
+        private void MostrarBotonRecalcular()
+        {
+            LnkRecalcularTodos.Visible = true;
         }
 
         private bool ValidarAcceso()
@@ -54,48 +67,53 @@ namespace UI.Pages
                 {
                     LblEstado.Text = "Integridad confirmada: los DVH y el DVV de usuarios son validos.";
                     LblEstado.ForeColor = System.Drawing.Color.Green;
-                    BtnReparar.Visible = false;
-                    GvRegistrosInvalidos.Visible = false;
+                    MostrarBotonRecalcular();
                     Application["IntegrityMaintenance"] = false;
                 }
                 else
                 {
                     LblEstado.Text = $"Se detecto error de integridad. Usuarios con DVH invalido: {usuariosInvalidos.Count}. DVV valido: {(estado.DVVValido ? "si" : "no")}.";
                     LblEstado.ForeColor = System.Drawing.Color.OrangeRed;
-                    BtnReparar.Visible = true;
+                    MostrarBotonRecalcular();
                     Application["IntegrityMaintenance"] = true;
-
-                    var registrosConDVH = usuariosInvalidos.Select(u => new
-                    {
-                        u.IdUsuario,
-                        u.Email,
-                        u.Nombre,
-                        u.IdRol,
-                        u.DVH,
-                        DVHCorrecto = ValidarDVH.CalcularDVH(u)
-                    }).ToList();
-
-                    GvRegistrosInvalidos.Visible = true;
-                    GvRegistrosInvalidos.DataSource = registrosConDVH;
-                    GvRegistrosInvalidos.DataBind();
-
-                    for (int i = 0; i < GvRegistrosInvalidos.Rows.Count; i++)
-                    {
-                        var lbl = GvRegistrosInvalidos.Rows[i].FindControl("LblDVHCorrecto") as System.Web.UI.WebControls.Label;
-                        if (lbl != null && i < registrosConDVH.Count)
-                        {
-                            lbl.Text = registrosConDVH[i].DVHCorrecto.ToString();
-                        }
-                    }
                 }
+
+                CargarUsuarios();
             }
             catch (Exception ex)
             {
                 Application["IntegrityMaintenance"] = true;
                 LblEstado.Text = "Error al validar integridad: " + ex.Message;
                 LblEstado.ForeColor = System.Drawing.Color.Red;
-                BtnReparar.Visible = true;
+                MostrarBotonRecalcular();
             }
+        }
+
+        private void CargarUsuarios()
+        {
+            var usuarios = _usuarioService.ObtenerTodos()
+                .OrderBy(u => u.IdUsuario)
+                .Select(u =>
+                {
+                    int dvhCalculado = ValidarDVH.CalcularDVH(u);
+                    bool valido = u.DVH.HasValue && u.DVH.Value == dvhCalculado;
+
+                    return new
+                    {
+                        u.IdUsuario,
+                        u.Email,
+                        u.Nombre,
+                        u.IdRol,
+                        DVH = u.DVH.HasValue ? u.DVH.Value.ToString() : "NULL",
+                        DVHCorrecto = dvhCalculado,
+                        Estado = valido ? "Valido" : "Recalcular"
+                    };
+                })
+                .ToList();
+
+            GvUsuarios.Visible = true;
+            GvUsuarios.DataSource = usuarios;
+            GvUsuarios.DataBind();
         }
 
         protected void BtnValidar_Click(object sender, EventArgs e)
@@ -103,7 +121,12 @@ namespace UI.Pages
             CargarEstadoIntegridad();
         }
 
-        protected void BtnReparar_Click(object sender, EventArgs e)
+        protected void RecalcularTodos_Click(object sender, EventArgs e)
+        {
+            RecalcularTodos();
+        }
+
+        private void RecalcularTodos()
         {
             try
             {
@@ -111,7 +134,7 @@ namespace UI.Pages
                 Application["IntegrityMaintenance"] = false;
                 LblEstado.Text = $"Se recalcularon DVH/DVV correctamente. Usuarios con DVH reparado: {usuariosReparados.Count}.";
                 LblEstado.ForeColor = System.Drawing.Color.Green;
-                BtnReparar.Visible = false;
+                MostrarBotonRecalcular();
                 CargarEstadoIntegridad();
             }
             catch (Exception ex)

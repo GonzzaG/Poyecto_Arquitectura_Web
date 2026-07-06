@@ -139,10 +139,10 @@
 
     <script>
         var productoActual = null;
-        var carrito = [];
+        var carrito = <%= CarritoInicialJson %>;
 
         function abrirSidebar(id, nombre, precio, descripcion, stock, imagenUrl) {
-            productoActual = { id: id, nombre: nombre, precio: precio, imagenUrl: imagenUrl };
+            productoActual = { idObjeto: id, nombre: nombre, precio: precio, imagenUrl: imagenUrl };
             document.getElementById('sidebarNombre').textContent = nombre;
             document.getElementById('sidebarPrecio').textContent = '$ ' + precio.toLocaleString('es-AR', { minimumFractionDigits: 2 });
             document.getElementById('sidebarDescripcion').textContent = descripcion;
@@ -155,7 +155,7 @@
             icon.style.display = 'none';
             document.getElementById('btnSidebarAgregar').onclick = function () {
                 var cant = parseInt(document.getElementById('sidebarCantidad').textContent);
-                agregarAlCarrito(productoActual.id, productoActual.nombre, productoActual.precio, productoActual.imagenUrl, cant);
+                agregarAlCarrito(productoActual.idObjeto, productoActual.nombre, productoActual.precio, productoActual.imagenUrl, cant);
                 cerrarSidebar();
             };
             document.getElementById('divSidebar').style.display = 'block';
@@ -174,25 +174,27 @@
         }
 
         function agregarAlCarrito(id, nombre, precio, imagenUrl, cantidad) {
-            var existente = carrito.find(function (x) { return x.id === id; });
+            var existente = carrito.find(function (x) { return x.IdObjeto === id; });
             if (existente) {
-                existente.cantidad += cantidad;
+                existente.Cantidad += cantidad;
             } else {
-                carrito.push({ id: id, nombre: nombre, precio: precio, imagenUrl: imagenUrl, cantidad: cantidad });
+                carrito.push({ IdObjeto: id, Nombre: nombre, Precio: precio, ImagenUrl: imagenUrl, Cantidad: cantidad });
             }
             actualizarCarritoUI();
             sincronizarCarritoHidden();
+            persistirCarrito();
         }
 
         function quitarDelCarrito(id) {
-            carrito = carrito.filter(function (x) { return x.id !== id; });
+            carrito = carrito.filter(function (x) { return x.IdObjeto !== id; });
             actualizarCarritoUI();
             sincronizarCarritoHidden();
+            persistirCarrito();
         }
 
         function actualizarCarritoUI() {
-            var count = carrito.reduce(function (s, x) { return s + x.cantidad; }, 0);
-            var total = carrito.reduce(function (s, x) { return s + x.precio * x.cantidad; }, 0);
+            var count = carrito.reduce(function (s, x) { return s + x.Cantidad; }, 0);
+            var total = carrito.reduce(function (s, x) { return s + x.Precio * x.Cantidad; }, 0);
 
             document.getElementById('carritoCount').textContent = count;
             document.getElementById('carritoVacio').style.display = carrito.length === 0 ? 'block' : 'none';
@@ -208,13 +210,13 @@
                 div.style = 'display:flex; align-items:flex-start; gap:8px;';
                 div.innerHTML =
                     '<div style="width:36px;height:36px;background:#f8fafc;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
-                    '<img src="' + item.imagenUrl + '" style="max-width:28px;max-height:28px;object-fit:contain;" onerror="this.style.display=\'none\'" /></div>' +
+                    '<img src="' + item.ImagenUrl + '" style="max-width:28px;max-height:28px;object-fit:contain;" onerror="this.style.display=\'none\'" /></div>' +
                     '<div style="flex:1;min-width:0;">' +
-                    '<p style="font-size:12px;font-weight:600;color:#020617;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + item.nombre + '</p>' +
-                    '<p style="font-size:11px;color:#94a3b8;">× ' + item.cantidad + '</p></div>' +
+                    '<p style="font-size:12px;font-weight:600;color:#020617;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + item.Nombre + '</p>' +
+                    '<p style="font-size:11px;color:#94a3b8;">× ' + item.Cantidad + '</p></div>' +
                     '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">' +
-                    '<span style="font-size:12px;font-weight:600;color:#020617;white-space:nowrap;">$ ' + (item.precio * item.cantidad).toLocaleString('es-AR', { minimumFractionDigits: 2 }) + '</span>' +
-                    '<button type="button" onclick="quitarDelCarrito(' + item.id + ')" style="background:none;border:none;cursor:pointer;font-size:11px;color:#94a3b8;padding:0;">✕ quitar</button></div>';
+                    '<span style="font-size:12px;font-weight:600;color:#020617;white-space:nowrap;">$ ' + (item.Precio * item.Cantidad).toLocaleString('es-AR', { minimumFractionDigits: 2 }) + '</span>' +
+                    '<button type="button" onclick="quitarDelCarrito(' + item.IdObjeto + ')" style="background:none;border:none;cursor:pointer;font-size:11px;color:#94a3b8;padding:0;">✕ quitar</button></div>';
                 container.appendChild(div);
             });
         }
@@ -222,6 +224,17 @@
         function sincronizarCarritoHidden() {
             document.getElementById('<%= hfCarrito.ClientID %>').value = JSON.stringify(carrito);
         }
+
+        function persistirCarrito() {
+            if (typeof PageMethods === 'undefined' || typeof PageMethods.GuardarCarrito !== 'function') {
+                return;
+            }
+
+            PageMethods.GuardarCarrito(carrito, function () { }, function () { });
+        }
+
+        actualizarCarritoUI();
+        sincronizarCarritoHidden();
     </script>
 
 </asp:Content>

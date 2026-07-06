@@ -142,7 +142,7 @@ namespace Business.Services.Usuarios
                 var usuario = ObtenerUsuario(cookie.Name);
                 if (usuario != null)
                 {
-                    return roles.ToString().Contains(usuario.Rol.Nombre);
+                    return roles.Any(x => string.Equals(x.ToString(), usuario.Rol.Nombre, StringComparison.OrdinalIgnoreCase));
 
                 }
                 else

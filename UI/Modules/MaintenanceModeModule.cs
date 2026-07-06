@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Web;
 using BEL.Constantes;
 using Business.Helper;
+using Business.Services.Integrity;
 using Business.Services.Usuarios;
 
 namespace UI.Modules
@@ -11,6 +12,7 @@ namespace UI.Modules
     public sealed class MaintenanceModeModule : IHttpModule
     {
         private static readonly UsuarioService UsuarioService = new UsuarioService();
+        private static readonly IntegrityValidationService IntegrityValidationService = new IntegrityValidationService();
 
         public void Init(HttpApplication context)
         {
@@ -30,17 +32,24 @@ namespace UI.Modules
             }
 
             var context = application.Context;
-            if (!EstaEnMantenimiento(context) || EsRutaPermitida(context.Request))
+            if (EsRutaPermitida(context.Request))
             {
                 return;
             }
 
             if (EsWebmaster(context))
             {
+                ActualizarModoMantenimiento(context);
                 return;
             }
 
-            context.Response.Redirect("~/Pages/Mantenimiento.aspx", false);
+            ActualizarModoMantenimiento(context);
+            if (!EstaEnMantenimiento(context))
+            {
+                return;
+            }
+
+            context.Response.Redirect("~/Pages/Mantenimiento", false);
             context.ApplicationInstance.CompleteRequest();
         }
 
@@ -55,12 +64,26 @@ namespace UI.Modules
             string path = request.AppRelativeCurrentExecutionFilePath ?? string.Empty;
 
             return path.Equals("~/Pages/Mantenimiento.aspx", StringComparison.OrdinalIgnoreCase)
+                || path.Equals("~/Pages/Mantenimiento", StringComparison.OrdinalIgnoreCase)
                 || path.Equals("~/Pages/Login.aspx", StringComparison.OrdinalIgnoreCase)
                 || path.Equals("~/Login", StringComparison.OrdinalIgnoreCase)
                 || path.StartsWith("~/Content/", StringComparison.OrdinalIgnoreCase)
                 || path.StartsWith("~/Scripts/", StringComparison.OrdinalIgnoreCase)
                 || path.StartsWith("~/Images/", StringComparison.OrdinalIgnoreCase)
                 || path.Equals("~/favicon.ico", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static void ActualizarModoMantenimiento(HttpContext context)
+        {
+            try
+            {
+                var estado = IntegrityValidationService.ValidarEstadoIntegridad();
+                context.Application["IntegrityMaintenance"] = !estado.EsValido;
+            }
+            catch
+            {
+                context.Application["IntegrityMaintenance"] = true;
+            }
         }
 
         private static bool EsWebmaster(HttpContext context)

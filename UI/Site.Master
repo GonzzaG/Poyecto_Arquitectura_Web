@@ -72,6 +72,8 @@
                     <div class="hidden items-center gap-2 text-sm font-semibold text-slate-600 md:flex">
                         <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
                         <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/Catalogo">Catálogo</a>
+                        <a id="LnkMisCompras" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/MisCompras" visible="false">Mis compras</a>
+                        <a id="LnkCompras" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/Compras" visible="false">Compras</a>
                         <a id="LnkBitacora" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
                         <a id="LnkIntegridad" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/IntegrityValidation.aspx" visible="false">Integridad</a>
                         <a id="LnkMigraciones" class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/ApplyMigrations.aspx" visible="false">Migraciones</a>
@@ -79,7 +81,6 @@
 
                         <asp:Panel ID="PnlPublicLinks" runat="server" CssClass="flex items-center gap-2">
                             <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Login">Login</a>
-                            <a class="rounded px-3 py-2 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/Catalogo">Catálogo</a>
                             <a class="rounded bg-slate-950 px-4 py-2 text-white transition hover:bg-cyan-700" runat="server" href="~/Registro">Registro</a>
 
                         </asp:Panel>
@@ -106,6 +107,7 @@
                                     Visible="false" />
                                 <asp:Button ID="BtnCerrarSesion" runat="server" Text="Cerrar sesión"
                                     OnClick="BtnCerrarSesion_Click"
+                                    CausesValidation="false"
                                     Style="display: flex; width: 100%; align-items: center; gap: 8px; padding: 10px 14px; font-size: 13px; font-weight: 500; color: #991b1b; background: none; border: none; cursor: pointer; text-align: left;"
                                     onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='none'" />
                             </div>
@@ -116,6 +118,8 @@
                 <div id="main-navigation" class="border-t border-slate-200 py-3 text-sm font-semibold text-slate-700 md:hidden" data-menu-panel hidden>
                     <div class="flex flex-col gap-1">
                         <a class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/">Inicio</a>
+                        <a id="LnkMisComprasMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/MisCompras" visible="false">Mis compras</a>
+                        <a id="LnkComprasMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/Compras" visible="false">Compras</a>
                         <a id="LnkBitacoraMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Bitacora" visible="false">Bit&aacute;cora</a>
                         <a id="LnkIntegridadMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/IntegrityValidation.aspx" visible="false">Integridad</a>
                         <a id="LnkMigracionesMobile" class="rounded px-3 py-3 transition hover:bg-slate-100 hover:text-slate-950" runat="server" href="~/Pages/ApplyMigrations.aspx" visible="false">Migraciones</a>
@@ -127,7 +131,7 @@
                         <asp:Panel ID="PnlUserSessionMobile" runat="server" Visible="false" CssClass="mt-2 rounded border border-slate-200 bg-slate-50 p-3">
                             <span class="block text-xs font-semibold uppercase tracking-wide text-cyan-700">Usuario</span>
                             <asp:Label ID="LblUsuarioLogueadoMobile" runat="server" CssClass="mt-1 block break-all text-sm font-semibold text-slate-700" />
-                            <asp:Button ID="BtnCerrarSesionMobile" runat="server" Text="Cerrar sesion" OnClick="BtnCerrarSesion_Click" CssClass="mt-3 w-full rounded bg-slate-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700" />
+                            <asp:Button ID="BtnCerrarSesionMobile" runat="server" Text="Cerrar sesion" OnClick="BtnCerrarSesion_Click" CausesValidation="false" CssClass="mt-3 w-full rounded bg-slate-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700" />
                         </asp:Panel>
                     </div>
                 </div>

@@ -7,7 +7,14 @@
         <p class="mt-4 text-base leading-7 text-slate-600">
             Se detectó una inconsistencia de integridad en los usuarios. El equipo administrador ya puede acceder para validar y recalcular los dígitos verificadores.
         </p>
-        <div class="mt-8">
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <asp:Button
+                ID="BtnCerrarSesionMantenimiento"
+                runat="server"
+                Text="Cerrar sesion"
+                OnClick="BtnCerrarSesionMantenimiento_Click"
+                CausesValidation="false"
+                CssClass="inline-flex rounded bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700" />
             <a class="inline-flex rounded bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700" runat="server" href="~/Login">Ir al login</a>
         </div>
     </section>

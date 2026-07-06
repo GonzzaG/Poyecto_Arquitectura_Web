@@ -41,7 +41,7 @@ El archivo `connectionStrings.config` **no está incluido en el repositorio** po
 Pasos:
 
 1. Ir a la carpeta del proyecto **UI**
-2. Encontrar el archivo `connectionStrings.example.config`
+2. Encontrar el archivo `connectionStrings.config.example`
 3. Hacer una copia y renombrarla a `connectionStrings.config`
 4. Abrir `connectionStrings.config` y reemplazar únicamente el nombre del servidor:
 
@@ -87,6 +87,18 @@ Antes de commitear o pushear, revisar siempre que `SincronizarBaseDatosAlIniciar
 Abrir la solución en Visual Studio y ejecutar el proyecto **UI** como Startup Project.
 
 Si el flag `SincronizarBaseDatosAlIniciar` está en `true`, Entity Framework va a crear o actualizar la estructura de la base de datos al iniciar la aplicación. **No es necesario correr ningún comando en la consola de NuGet.**
+
+---
+
+## Usuarios demo
+
+Estos usuarios se crean al aplicar las migraciones de Entity Framework:
+
+| Usuario | Contraseña |
+| --- | --- |
+| webmaster@demo.com | Demo123! |
+| cliente@demo.com | Demo123! |
+| adm.operaciones@demo.com | Demo123! |
 
 ---
 

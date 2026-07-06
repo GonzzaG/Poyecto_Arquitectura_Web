@@ -15,7 +15,8 @@ namespace Business.Services.Integrity
                 resultado.UsuariosConDVHInvalido = ValidarDVH.ValidarDVHTablaUsuarios();
                 resultado.DVVRegistrado = ValidarDVH.ObtenerDVVRegistradoUsuarios();
                 resultado.DVVCalculado = ValidarDVH.CalcularDVVUsuarios();
-                resultado.DVVValido = resultado.DVVRegistrado == resultado.DVVCalculado;
+                resultado.DVVValido = resultado.UsuariosConDVHInvalido.Count == 0
+                    && resultado.DVVRegistrado == resultado.DVVCalculado;
 
                 return resultado;
             }

@@ -79,6 +79,7 @@
     <Compile Include="Services\Integrity\IntegrityValidationResult.cs" />
     <Compile Include="Services\Integrity\IntegrityValidationService.cs" />
     <Compile Include="Services\Objeto\ObjetoService.cs" />
+    <Compile Include="Services\Pedido\PedidoService.cs" />
     <Compile Include="Services\Usuarios\UsuarioService.cs" />
   </ItemGroup>
   <ItemGroup>

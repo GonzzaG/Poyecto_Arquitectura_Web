@@ -351,8 +351,7 @@ namespace DAL
 
             foreach (var usuario in usuarios.OrderBy(u => u.IdUsuario))
             {
-                int dvh = usuario.DVH.HasValue ? usuario.DVH.Value : CalcularDVH(usuario);
-                sb.Append(dvh.ToString());
+                sb.Append(CalcularDVH(usuario).ToString());
             }
 
             return CalcularDVHDesdeString(sb.ToString());

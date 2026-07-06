@@ -33,6 +33,24 @@ namespace UI
         protected global::UI.Controls.NotificationModal AppModal;
 
         /// <summary>
+        /// LnkMisCompras control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkMisCompras;
+
+        /// <summary>
+        /// LnkCompras control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkCompras;
+
+        /// <summary>
         /// LnkBitacora control.
         /// </summary>
         /// <remarks>
@@ -133,12 +151,23 @@ namespace UI
 
         /// <summary>
         /// BtnValidarIntegridad control.
+        /// LnkMisComprasMobile control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnValidarIntegridad;
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkMisComprasMobile;
+
+        /// <summary>
+        /// LnkComprasMobile control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor LnkComprasMobile;
 
         /// <summary>
         /// LnkBitacoraMobile control.
