@@ -40,6 +40,7 @@ namespace DAL.Repository.Usuarios
                 {
                     usuario.IntentosFallidos = intentosFallidos;
                     usuario.FechaBloqueo = fechaBloqueo;
+                    ValidarDVH.ActualizarDVHUsuario(context, usuario);
                     context.SaveChanges();
                 }
             }

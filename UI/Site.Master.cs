@@ -1,6 +1,7 @@
 using BEL;
 using BEL.Constantes;
 using Business.Helper;
+using Business.Services.Integrity;
 using Business.Services.Usuarios;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace UI
     public partial class SiteMaster : MasterPage
     {
         private readonly UsuarioService _usuarioService = new UsuarioService();
+        private readonly IntegrityValidationService _integrityService = new IntegrityValidationService();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -42,12 +44,27 @@ namespace UI
             Context.ApplicationInstance.CompleteRequest();
         }
 
+        protected void BtnValidarIntegridad_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var usuariosReparados = _integrityService.ReparaIntegridad();
+                Application["IntegrityMaintenance"] = false;
+                ShowSuccess($"Se recalcularon DVH/DVV. Usuarios con DVH reparado: {usuariosReparados.Count}.", "Integridad Validada");
+            }
+            catch (Exception ex)
+            {
+                ShowError("Error al validar integridad: " + ex.Message);
+            }
+        }
+
         private void ActualizarEstadoSesion()
         {
             Usuario usuario = ObtenerUsuarioAutenticado();
             RolesEnum? rol = usuario != null ? (RolesEnum?)usuario.IdRol : null;
 
             AplicarVisibilidadPorRol(rol);
+            ActualizarAvisoIntegridad(rol);
 
             if (usuario != null)
             {
@@ -86,8 +103,13 @@ namespace UI
                 { LnkComprasMobile,     RolesEnum.ADM_OPERACIONES },
                 { LnkBitacora,          RolesEnum.WEBMASTER     },
                 { LnkBitacoraMobile,    RolesEnum.WEBMASTER     },
+                { LnkIntegridad,        RolesEnum.WEBMASTER     },
+                { LnkIntegridadMobile,  RolesEnum.WEBMASTER     },
+                { LnkMigraciones,       RolesEnum.WEBMASTER     },
+                { LnkMigracionesMobile, RolesEnum.WEBMASTER     },
                 { LnkBackup,            RolesEnum.WEBMASTER     },
                 { LnkBackupMobile,      RolesEnum.WEBMASTER     },
+                { BtnValidarIntegridad, RolesEnum.WEBMASTER     },
             };
 
             foreach (var entry in controles)
@@ -99,6 +121,14 @@ namespace UI
 
             LnkMisCompras.Visible = rol == RolesEnum.CLIENTE;
             LnkMisComprasMobile.Visible = rol == RolesEnum.CLIENTE;
+        }
+
+        private void ActualizarAvisoIntegridad(RolesEnum? rol)
+        {
+            bool mantenimiento = Application["IntegrityMaintenance"] is bool && (bool)Application["IntegrityMaintenance"];
+            bool esWebmaster = rol.HasValue && NivelAcceso(rol.Value) >= NivelAcceso(RolesEnum.WEBMASTER);
+
+            PnlIntegrityWarning.Visible = mantenimiento && esWebmaster;
         }
 
         private static int NivelAcceso(RolesEnum rol)

@@ -4,11 +4,11 @@ using BEL;
 
 namespace DAL.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<AppDbContext>
+    public sealed class Configuration : DbMigrationsConfiguration<AppDbContext>
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
             AutomaticMigrationDataLossAllowed = false;
             ContextKey = "DAL.AppDbContext";
         }

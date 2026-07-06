@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Business.Services.Database;
+using Business.Services.Integrity;
 
 namespace UI
 {
@@ -15,6 +16,7 @@ namespace UI
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             SincronizarBaseDatosSiEstaHabilitado();
+
         }
 
         private static void SincronizarBaseDatosSiEstaHabilitado()
@@ -35,5 +37,7 @@ namespace UI
                 throw;
             }
         }
+
+        
     }
 }

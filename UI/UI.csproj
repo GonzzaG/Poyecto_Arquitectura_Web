@@ -248,8 +248,11 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="connectionStrings.config.example" />
+    <Content Include="Pages\ApplyMigrations.aspx" />
     <Content Include="Pages\BackupManagement.aspx" />
     <Content Include="Pages\Catalogo.aspx" />
+    <Content Include="Pages\IntegrityValidation.aspx" />
+    <Content Include="Pages\Mantenimiento.aspx" />
     <Content Include="Pages\Checkout.aspx" />
     <Content Include="Pages\Compras.aspx" />
     <Content Include="Pages\MisCompras.aspx" />
@@ -323,6 +326,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Modules\GlobalExceptionModule.cs" />
+    <Compile Include="Modules\MaintenanceModeModule.cs" />
+    <Compile Include="Pages\ApplyMigrations.aspx.cs">
+      <DependentUpon>ApplyMigrations.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\ApplyMigrations.aspx.designer.cs">
+      <DependentUpon>ApplyMigrations.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\BackupManagement.aspx.cs">
       <DependentUpon>BackupManagement.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -336,6 +347,20 @@
     </Compile>
     <Compile Include="Pages\Catalogo.aspx.designer.cs">
       <DependentUpon>Catalogo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\IntegrityValidation.aspx.cs">
+      <DependentUpon>IntegrityValidation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\IntegrityValidation.aspx.designer.cs">
+      <DependentUpon>IntegrityValidation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Mantenimiento.aspx.cs">
+      <DependentUpon>Mantenimiento.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Mantenimiento.aspx.designer.cs">
+      <DependentUpon>Mantenimiento.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Checkout.aspx.cs">
       <DependentUpon>Checkout.aspx</DependentUpon>
@@ -435,6 +460,10 @@
     <ProjectReference Include="..\Business\Business.csproj">
       <Project>{c507ed25-455d-441d-b5b5-a6d4a4476beb}</Project>
       <Name>Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DAL\DAL.csproj">
+      <Project>{8b624838-7df1-4a2a-9345-e514b02e06c0}</Project>
+      <Name>DAL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

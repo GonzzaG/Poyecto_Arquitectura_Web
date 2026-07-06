@@ -1,16 +1,18 @@
-﻿using System;
+﻿using BEL;
+using DAL;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Web;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net;
-using DAL;
-using BEL;
+using System.Web;
 namespace Services
 {
     public class SessionManager
     {
+
         public bool ValidarCookie(Cookie cookie)
         {
             bool isValid = true;
@@ -77,6 +79,7 @@ namespace Services
                 var sesionRepository = new DAL.Repository.Sesiones.SesionRepository();
                 sesionRepository.GuardarSesion(email, sessionId, now);
 
+
                 return sessionCookie;
             }
             else
@@ -88,5 +91,6 @@ namespace Services
         {
             return sessionId.ToString() + now.ToString();
         }
+
     }
 }

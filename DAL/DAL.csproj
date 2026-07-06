@@ -81,12 +81,15 @@
     <Compile Include="Migrations\202606142135062_AgregarUrlAObjeto.Designer.cs">
       <DependentUpon>202606142135062_AgregarUrlAObjeto.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202701011200000_AgregarDVHAUsuario.cs" />
+    <Compile Include="Migrations\202701011210000_AgregarDVVUsuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\Backup\DatabaseBackupRepository.cs" />
     <Compile Include="Repository\Objeto\ObjetoRepository.cs" />
     <Compile Include="Repository\Pedido\PedidoRepository.cs" />
     <Compile Include="Repository\Sesiones\SesionRepository.cs" />
     <Compile Include="Repository\Usuarios\UsuarioRepository.cs" />
+    <Compile Include="ValidarDVH.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BEL\BEL.csproj">

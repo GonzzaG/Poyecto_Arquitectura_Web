@@ -1,14 +1,17 @@
 ﻿using BEL;
 using BEL.Constantes;
 using BEL.Exceptions;
+using Business.Services.Integrity;
 using DAL.Repository.Usuarios;
 using Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 namespace Business.Services.Usuarios
 {
     public class UsuarioService
@@ -57,6 +60,8 @@ namespace Business.Services.Usuarios
             {
                 Cookie cookie = sessionManager.Login(email, password, usuario.Password);
                 _usuarioRepository.ActualizarBloqueo(email, 0, null);
+                ValidarIntegridadEnLogin(usuario);
+
                 return cookie;
             }
             catch (UnauthorizedAccessException)
@@ -78,6 +83,53 @@ namespace Business.Services.Usuarios
 
                 _usuarioRepository.ActualizarBloqueo(email, nuevosIntentos, nuevaFechaBloqueo);
                 throw new AppException("Contraseña incorrecta");
+            }
+        }
+
+
+        private static void ValidarIntegridadEnLogin(Usuario usuario)
+        {
+            try
+            {
+                var integrityService = new IntegrityValidationService();
+                var estado = integrityService.ValidarEstadoIntegridad();
+                bool hayErrorIntegridad = !estado.EsValido;
+
+                EstablecerModoMantenimiento(hayErrorIntegridad);
+
+                if (hayErrorIntegridad)
+                {
+                    Trace.TraceWarning($"Se detectó error de integridad en USUARIO. DVH inválidos: {estado.UsuariosConDVHInvalido.Count}. DVV registrado: {estado.DVVRegistrado}. DVV calculado: {estado.DVVCalculado}.");
+                }
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    errorMsg += " | Causa: " + ex.InnerException.Message;
+                }
+
+                // Log detallado del error
+                Trace.TraceError($"Error al validar integridad de datos: {errorMsg}");
+
+                // Si es error de migración, loguear instrucciones
+                if (errorMsg.Contains("DVH") && errorMsg.Contains("migración"))
+                {
+                    Trace.TraceWarning("INSTRUCCIÓN: Accede a /Pages/ApplyMigrations.aspx (como WEBMASTER) para aplicar las migraciones pendientes.");
+                }
+
+                EstablecerModoMantenimiento(true);
+                Trace.TraceError($"No se pudo validar integridad de datos: {errorMsg}");
+            }
+        }
+
+        private static void EstablecerModoMantenimiento(bool activo)
+        {
+            var context = HttpContext.Current;
+            if (context != null)
+            {
+                context.Application["IntegrityMaintenance"] = activo;
             }
         }
         public bool ValidarAcceso(Cookie cookie, List<RolesEnum> roles)

@@ -1,0 +1,35 @@
+# SOLUCIÓN RÁPIDA - COPIAR Y PEGAR EN PACKAGE MANAGER CONSOLE
+# ============================================================
+
+# Esta es la solución más rápida para el error de migraciones pendientes.
+# Copia TODO el texto de abajo y pégalo en:
+# Tools → NuGet Package Manager → Package Manager Console
+
+# ──────────────────────────────────────────────────────────────────
+
+# PASO 1: Ver el estado actual de migraciones
+Write-Host "`n=== ESTADO ACTUAL ===" -ForegroundColor Cyan
+Get-Migrations -ProjectName DAL | Format-Table
+
+# PASO 2: Ver migraciones pendientes
+Write-Host "`n=== MIGRACIONES PENDIENTES ===" -ForegroundColor Yellow
+$pendingCount = @(Get-Migrations -ProjectName DAL | Where-Object { $_.Name -like "*" }).Count
+Write-Host "Total de migraciones registradas en código: $pendingCount" -ForegroundColor White
+
+# PASO 3: Crear nueva migración para cambios pendientes
+Write-Host "`n=== CREANDO NUEVA MIGRACIÓN ===" -ForegroundColor Green
+Add-Migration FinalizarDVHYMapeados -ProjectName DAL -Force
+
+Write-Host "`n✓ Migración creada. Ahora se aplicará a la base de datos..." -ForegroundColor Green
+
+# PASO 4: Aplicar todas las migraciones
+Write-Host "`n=== APLICANDO MIGRACIONES ===" -ForegroundColor Green
+Update-Database -ProjectName DAL -Verbose
+
+Write-Host "`n✓ ¡Migraciones aplicadas exitosamente!" -ForegroundColor Green
+
+# PASO 5: Verificar resultado
+Write-Host "`n=== VERIFICACIÓN ===" -ForegroundColor Cyan
+Get-Migrations -ProjectName DAL | Format-Table
+
+Write-Host "`n✓ Proceso completado. Si no hay errores, ¡todo está listo!" -ForegroundColor Green
