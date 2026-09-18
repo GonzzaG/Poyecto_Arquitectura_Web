@@ -3,7 +3,9 @@ using BEL.DTOs.Ventas;
 using DAL.Repository.Pedido;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 
 namespace Business.Services.Pedido
 {
@@ -117,6 +119,84 @@ namespace Business.Services.Pedido
                 TotalPedidos = totalPedidos,
                 Productos = productos
             };
+        }
+
+        public ReporteVentasDto GenerarReporteComparativaProductosVendidos(ComparativaVentasDto comparativa)
+        {
+            if (comparativa == null)
+            {
+                throw new ArgumentNullException(nameof(comparativa));
+            }
+
+            var cultura = CultureInfo.GetCultureInfo("es-AR");
+            var contenido = new StringBuilder();
+            contenido.AppendLine("sep=;");
+            contenido.AppendLine("Informe de productos vendidos");
+            contenido.AppendLine($"Período;{EscaparCsv(ObtenerDescripcionPeriodo(comparativa))}");
+            contenido.AppendLine($"Generado;{DateTime.Now.ToString("dd/MM/yyyy HH:mm", cultura)}");
+            contenido.AppendLine($"Total de unidades vendidas;{comparativa.TotalUnidadesVendidas}");
+            contenido.AppendLine($"Total de pedidos;{comparativa.TotalPedidos}");
+            contenido.AppendLine($"Productos con ventas;{comparativa.TotalProductosConVentas}");
+            contenido.AppendLine();
+            contenido.AppendLine("Posición;Producto;Unidades vendidas;Pedidos;Participación");
+
+            int posicion = 1;
+            foreach (var producto in comparativa.Productos ?? new List<ProductoVendidoDto>())
+            {
+                contenido.AppendLine(string.Join(";", new[]
+                {
+                    posicion.ToString(cultura),
+                    EscaparCsv(producto.Nombre),
+                    producto.CantidadVendida.ToString(cultura),
+                    producto.CantidadPedidos.ToString(cultura),
+                    EscaparCsv(producto.ParticipacionPorcentaje.ToString("N2", cultura) + " %")
+                }));
+                posicion++;
+            }
+
+            byte[] bytes = Encoding.UTF8.GetBytes("\uFEFF" + contenido);
+            return new ReporteVentasDto
+            {
+                NombreArchivo = ObtenerNombreArchivo(comparativa),
+                TipoContenido = "text/csv;charset=utf-8",
+                ContenidoBase64 = Convert.ToBase64String(bytes)
+            };
+        }
+
+        private static string ObtenerDescripcionPeriodo(ComparativaVentasDto comparativa)
+        {
+            if (string.IsNullOrWhiteSpace(comparativa.FechaDesde) && string.IsNullOrWhiteSpace(comparativa.FechaHasta))
+            {
+                return "Histórico completo";
+            }
+
+            string desde = FormatearFechaReporte(comparativa.FechaDesde) ?? "Inicio";
+            string hasta = FormatearFechaReporte(comparativa.FechaHasta) ?? "Actualidad";
+            return $"Desde {desde} hasta {hasta}";
+        }
+
+        private static string ObtenerNombreArchivo(ComparativaVentasDto comparativa)
+        {
+            string periodo = string.IsNullOrWhiteSpace(comparativa.FechaDesde) && string.IsNullOrWhiteSpace(comparativa.FechaHasta)
+                ? "historico"
+                : $"{comparativa.FechaDesde ?? "inicio"}-a-{comparativa.FechaHasta ?? "actualidad"}";
+            return $"informe-productos-vendidos-{periodo}.csv";
+        }
+
+        private static string FormatearFechaReporte(string fecha)
+        {
+            DateTime valor;
+            return DateTime.TryParseExact(fecha, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out valor)
+                ? valor.ToString("dd/MM/yyyy")
+                : null;
+        }
+
+        private static string EscaparCsv(string valor)
+        {
+            string texto = valor ?? string.Empty;
+            return texto.IndexOfAny(new[] { ';', '"', '\r', '\n' }) >= 0
+                ? $"\"{texto.Replace("\"", "\"\"")}\""
+                : texto;
         }
     }
 }

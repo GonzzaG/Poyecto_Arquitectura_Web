@@ -47,6 +47,19 @@
         .ventas-boton:hover { background: #155e75; }
         .ventas-boton:disabled { cursor: wait; opacity: .65; }
 
+        .ventas-boton-secundario {
+            border: 1px solid #0e7490;
+            border-radius: .5rem;
+            padding: .65rem 1rem;
+            background: #fff;
+            color: #0e7490;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .ventas-boton-secundario:hover { background: #ecfeff; }
+        .ventas-boton-secundario:disabled { cursor: not-allowed; opacity: .5; }
+
         .ventas-acceso-rapido {
             display: flex;
             flex-wrap: wrap;
@@ -164,7 +177,10 @@
                             <button type="button" data-periodo="90">90 días</button>
                             <button type="button" data-periodo="todos">Histórico</button>
                         </div>
-                        <button id="ventasConsultar" type="button" class="ventas-boton">Actualizar gráficos</button>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="ventasConsultar" type="button" class="ventas-boton">Actualizar gráficos</button>
+                            <button id="ventasDescargarInforme" type="button" class="ventas-boton-secundario" disabled>Descargar informe</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -304,12 +320,15 @@
             'use strict';
 
             var endpoint = '<%= ResolveUrl("~/Services/VentasWebService.asmx/ObtenerComparativaProductos") %>';
+            var endpointInforme = '<%= ResolveUrl("~/Services/VentasWebService.asmx/GenerarInformeProductos") %>';
             var colores = ['#0891b2', '#2563eb', '#7c3aed', '#db2777', '#ea580c', '#65a30d', '#0f766e', '#475569'];
             var datosActuales = [];
+            var idConsultaActual = null;
             var formatoNumero = new Intl.NumberFormat('es-AR');
             var desde = document.getElementById('ventasFechaDesde');
             var hasta = document.getElementById('ventasFechaHasta');
             var consultar = document.getElementById('ventasConsultar');
+            var descargarInforme = document.getElementById('ventasDescargarInforme');
             var estado = document.getElementById('ventasEstado');
             var contenido = document.getElementById('ventasContenido');
             var sinResultados = document.getElementById('ventasSinResultados');
@@ -338,7 +357,13 @@
                 });
             }
 
-            function obtenerMensajeError(respuesta, cuerpo) {
+            function limpiarPeriodoRapidoSeleccionado() {
+                document.querySelectorAll('[data-periodo]').forEach(function (boton) {
+                    boton.setAttribute('aria-pressed', 'false');
+                });
+            }
+
+            function obtenerMensajeError(respuesta, cuerpo, mensajePredeterminado) {
                 if (respuesta.status === 401) {
                     return 'La sesión venció o no posee permisos para consultar las ventas.';
                 }
@@ -347,11 +372,13 @@
                     return cuerpo.Message;
                 }
 
-                return 'No se pudo obtener la comparativa de ventas.';
+                return mensajePredeterminado || 'No se pudo obtener la comparativa de ventas.';
             }
 
             async function cargarComparativa() {
                 if (desde.value && hasta.value && desde.value > hasta.value) {
+                    idConsultaActual = null;
+                    descargarInforme.disabled = true;
                     estado.textContent = 'La fecha desde no puede ser posterior a la fecha hasta.';
                     contenido.hidden = true;
                     sinResultados.hidden = true;
@@ -359,6 +386,7 @@
                 }
 
                 consultar.disabled = true;
+                descargarInforme.disabled = true;
                 estado.textContent = 'Consultando productos vendidos…';
                 contenido.setAttribute('aria-busy', 'true');
 
@@ -383,6 +411,7 @@
 
                     renderizar(cuerpo.d || cuerpo);
                 } catch (error) {
+                    idConsultaActual = null;
                     contenido.hidden = true;
                     sinResultados.hidden = true;
                     estado.textContent = error.message || 'No se pudo obtener la comparativa de ventas.';
@@ -394,6 +423,8 @@
 
             function renderizar(resultado) {
                 datosActuales = resultado.Productos || [];
+                idConsultaActual = resultado.IdConsulta || null;
+                descargarInforme.disabled = !idConsultaActual;
                 var hayDatos = datosActuales.length > 0;
                 contenido.hidden = !hayDatos;
                 sinResultados.hidden = hayDatos;
@@ -413,6 +444,66 @@
                     dibujarBarras(datosActuales.slice(0, 12));
                     dibujarParticipacion(datosActuales);
                 });
+            }
+
+            async function descargarReporteActual() {
+                if (!idConsultaActual) {
+                    estado.textContent = 'Actualice los gráficos antes de descargar el informe.';
+                    return;
+                }
+
+                descargarInforme.disabled = true;
+                var textoOriginal = descargarInforme.textContent;
+                descargarInforme.textContent = 'Generando informe…';
+                estado.textContent = 'Generando el informe de la comparativa visible…';
+
+                try {
+                    var respuesta = await fetch(endpointInforme, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+                        body: JSON.stringify({ idConsulta: idConsultaActual })
+                    });
+
+                    var cuerpo = null;
+                    try {
+                        cuerpo = await respuesta.json();
+                    } catch (errorJson) {
+                        cuerpo = null;
+                    }
+
+                    if (!respuesta.ok) {
+                        throw new Error(obtenerMensajeError(respuesta, cuerpo, 'No se pudo generar el informe de ventas.'));
+                    }
+
+                    var reporte = cuerpo.d || cuerpo;
+                    if (!reporte || !reporte.ContenidoBase64 || !reporte.NombreArchivo) {
+                        throw new Error('El web service no devolvió un informe válido.');
+                    }
+
+                    var binario = window.atob(reporte.ContenidoBase64);
+                    var bytes = new Uint8Array(binario.length);
+                    for (var indice = 0; indice < binario.length; indice++) {
+                        bytes[indice] = binario.charCodeAt(indice);
+                    }
+
+                    var archivo = new Blob([bytes], { type: reporte.TipoContenido || 'text/csv;charset=utf-8' });
+                    var url = window.URL.createObjectURL(archivo);
+                    var enlace = document.createElement('a');
+                    enlace.href = url;
+                    enlace.download = reporte.NombreArchivo;
+                    enlace.style.display = 'none';
+                    document.body.appendChild(enlace);
+                    enlace.click();
+                    enlace.remove();
+                    window.setTimeout(function () { window.URL.revokeObjectURL(url); }, 1000);
+                    estado.textContent = 'Informe descargado: ' + reporte.NombreArchivo;
+                } catch (error) {
+                    estado.textContent = error.message || 'No se pudo generar el informe de ventas.';
+                } finally {
+                    descargarInforme.textContent = textoOriginal;
+                    descargarInforme.disabled = !idConsultaActual;
+                }
             }
 
             function renderizarTabla(productos) {
@@ -558,6 +649,9 @@
             });
 
             consultar.addEventListener('click', cargarComparativa);
+            descargarInforme.addEventListener('click', descargarReporteActual);
+            desde.addEventListener('input', limpiarPeriodoRapidoSeleccionado);
+            hasta.addEventListener('input', limpiarPeriodoRapidoSeleccionado);
             window.addEventListener('resize', function () {
                 if (!contenido.hidden && datosActuales.length) {
                     dibujarBarras(datosActuales.slice(0, 12));

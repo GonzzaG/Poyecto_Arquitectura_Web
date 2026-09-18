@@ -4,6 +4,7 @@ namespace BEL.DTOs.Ventas
 {
     public class ComparativaVentasDto
     {
+        public string IdConsulta { get; set; }
         public string FechaDesde { get; set; }
         public string FechaHasta { get; set; }
         public int TotalUnidadesVendidas { get; set; }

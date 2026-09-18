@@ -59,6 +59,7 @@
     <Compile Include="DTOs\Bitacora\BitacoraRegistroDto.cs" />
     <Compile Include="DTOs\Ventas\ComparativaVentasDto.cs" />
     <Compile Include="DTOs\Ventas\ProductoVendidoDto.cs" />
+    <Compile Include="DTOs\Ventas\ReporteVentasDto.cs" />
     <Compile Include="Rol.cs" />
     <Compile Include="Sesion.cs" />
     <Compile Include="Usuario.cs" />
