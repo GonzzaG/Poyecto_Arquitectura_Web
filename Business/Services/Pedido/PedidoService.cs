@@ -1,4 +1,5 @@
 using BEL;
+using BEL.DTOs.Ventas;
 using DAL.Repository.Pedido;
 using System;
 using System.Collections.Generic;
@@ -68,6 +69,54 @@ namespace Business.Services.Pedido
             }
 
             return _repository.ObtenerFinalizadosPorUsuario(idUsuario);
+        }
+
+        public ComparativaVentasDto ObtenerComparativaProductosVendidos(DateTime? fechaDesde, DateTime? fechaHasta)
+        {
+            DateTime? desdeInclusive = fechaDesde?.Date;
+            DateTime? hastaInclusive = fechaHasta?.Date;
+
+            if (desdeInclusive.HasValue && hastaInclusive.HasValue && desdeInclusive.Value > hastaInclusive.Value)
+            {
+                throw new ArgumentException("La fecha desde no puede ser posterior a la fecha hasta.");
+            }
+
+            DateTime? hastaExclusive = hastaInclusive.HasValue && hastaInclusive.Value < DateTime.MaxValue.Date
+                ? hastaInclusive.Value.AddDays(1)
+                : (DateTime?)null;
+            var detalles = _repository.ObtenerDetallesProductosVendidos(desdeInclusive, hastaExclusive);
+            var productos = detalles
+                .GroupBy(x => new { x.IdProducto, x.NombreProducto })
+                .Select(grupo => new ProductoVendidoDto
+                {
+                    IdObjeto = grupo.Key.IdProducto,
+                    Nombre = grupo.Key.NombreProducto,
+                    CantidadVendida = grupo.Sum(x => x.Cantidad),
+                    CantidadPedidos = grupo.Select(x => x.IdPedido).Distinct().Count()
+                })
+                .OrderByDescending(x => x.CantidadVendida)
+                .ThenBy(x => x.Nombre)
+                .ToList();
+
+            int totalUnidades = productos.Sum(x => x.CantidadVendida);
+            int totalPedidos = detalles.Select(x => x.IdPedido).Distinct().Count();
+
+            foreach (var producto in productos)
+            {
+                producto.ParticipacionPorcentaje = totalUnidades == 0
+                    ? 0
+                    : Math.Round(producto.CantidadVendida * 100m / totalUnidades, 2);
+            }
+
+            return new ComparativaVentasDto
+            {
+                FechaDesde = desdeInclusive?.ToString("yyyy-MM-dd"),
+                FechaHasta = hastaInclusive?.ToString("yyyy-MM-dd"),
+                TotalUnidadesVendidas = totalUnidades,
+                TotalProductosConVentas = productos.Count,
+                TotalPedidos = totalPedidos,
+                Productos = productos
+            };
         }
     }
 }

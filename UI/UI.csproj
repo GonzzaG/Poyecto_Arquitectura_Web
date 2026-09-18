@@ -301,6 +301,7 @@
     <Content Include="Pages\Registro.aspx" />
     <Content Include="Pages\Bitacora.aspx" />
     <Content Include="Pages\Error.aspx" />
+    <Content Include="Services\VentasWebService.asmx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -434,6 +435,9 @@
     </Compile>
     <Compile Include="Pages\Error.aspx.designer.cs">
       <DependentUpon>Error.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\VentasWebService.asmx.cs">
+      <DependentUpon>VentasWebService.asmx</DependentUpon>
     </Compile>
     <Compile Include="WebMessageBox.cs" />
   </ItemGroup>

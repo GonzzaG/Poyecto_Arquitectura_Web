@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseSynchronization.cs" />
+    <Compile Include="Models\Ventas\DetalleVentaLectura.cs" />
     <Compile Include="Migrations\202604280000000_InitialCreate.cs" />
     <Compile Include="Migrations\202604280000000_InitialCreate.Designer.cs">
       <DependentUpon>202604280000000_InitialCreate.cs</DependentUpon>

@@ -1,4 +1,5 @@
 using BEL;
+using DAL.Models.Ventas;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -223,6 +224,37 @@ namespace DAL.Repository.Pedido
                     .Include(x => x.Detalles.Select(d => d.Objeto))
                     .Where(x => x.Finalizado && x.IdUsuario == idUsuario)
                     .OrderByDescending(x => x.FechaHora)
+                    .ToList();
+            }
+        }
+
+        public List<DetalleVentaLectura> ObtenerDetallesProductosVendidos(DateTime? fechaDesdeInclusive, DateTime? fechaHastaExclusive)
+        {
+            using (var context = new AppDbContext())
+            {
+                var detalles = context.DetallesPedido
+                    .AsNoTracking()
+                    .Where(x => x.Finalizado && x.Pedido.Finalizado && x.Objeto.EsProducto);
+
+                if (fechaDesdeInclusive.HasValue)
+                {
+                    detalles = detalles.Where(x => x.Pedido.FechaHora >= fechaDesdeInclusive.Value);
+                }
+
+                if (fechaHastaExclusive.HasValue)
+                {
+                    detalles = detalles.Where(x => x.Pedido.FechaHora < fechaHastaExclusive.Value);
+                }
+
+                return detalles
+                    .Select(x => new DetalleVentaLectura
+                    {
+                        IdPedido = x.IdPedido,
+                        FechaHora = x.Pedido.FechaHora,
+                        IdProducto = x.IdObjeto,
+                        NombreProducto = x.Objeto.Nombre,
+                        Cantidad = x.Cantidad
+                    })
                     .ToList();
             }
         }
