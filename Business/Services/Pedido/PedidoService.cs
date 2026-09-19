@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Business.Services.Pedido
 {
@@ -128,37 +127,14 @@ namespace Business.Services.Pedido
                 throw new ArgumentNullException(nameof(comparativa));
             }
 
-            var cultura = CultureInfo.GetCultureInfo("es-AR");
-            var contenido = new StringBuilder();
-            contenido.AppendLine("sep=;");
-            contenido.AppendLine("Informe de productos vendidos");
-            contenido.AppendLine($"Período;{EscaparCsv(ObtenerDescripcionPeriodo(comparativa))}");
-            contenido.AppendLine($"Generado;{DateTime.Now.ToString("dd/MM/yyyy HH:mm", cultura)}");
-            contenido.AppendLine($"Total de unidades vendidas;{comparativa.TotalUnidadesVendidas}");
-            contenido.AppendLine($"Total de pedidos;{comparativa.TotalPedidos}");
-            contenido.AppendLine($"Productos con ventas;{comparativa.TotalProductosConVentas}");
-            contenido.AppendLine();
-            contenido.AppendLine("Posición;Producto;Unidades vendidas;Pedidos;Participación");
-
-            int posicion = 1;
-            foreach (var producto in comparativa.Productos ?? new List<ProductoVendidoDto>())
-            {
-                contenido.AppendLine(string.Join(";", new[]
-                {
-                    posicion.ToString(cultura),
-                    EscaparCsv(producto.Nombre),
-                    producto.CantidadVendida.ToString(cultura),
-                    producto.CantidadPedidos.ToString(cultura),
-                    EscaparCsv(producto.ParticipacionPorcentaje.ToString("N2", cultura) + " %")
-                }));
-                posicion++;
-            }
-
-            byte[] bytes = Encoding.UTF8.GetBytes("\uFEFF" + contenido);
+            byte[] bytes = ReporteVentasExcelBuilder.Crear(
+                comparativa,
+                ObtenerDescripcionPeriodo(comparativa),
+                DateTime.Now);
             return new ReporteVentasDto
             {
                 NombreArchivo = ObtenerNombreArchivo(comparativa),
-                TipoContenido = "text/csv;charset=utf-8",
+                TipoContenido = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 ContenidoBase64 = Convert.ToBase64String(bytes)
             };
         }
@@ -180,7 +156,7 @@ namespace Business.Services.Pedido
             string periodo = string.IsNullOrWhiteSpace(comparativa.FechaDesde) && string.IsNullOrWhiteSpace(comparativa.FechaHasta)
                 ? "historico"
                 : $"{comparativa.FechaDesde ?? "inicio"}-a-{comparativa.FechaHasta ?? "actualidad"}";
-            return $"informe-productos-vendidos-{periodo}.csv";
+            return $"informe-productos-vendidos-{periodo}.xlsx";
         }
 
         private static string FormatearFechaReporte(string fecha)
@@ -191,12 +167,5 @@ namespace Business.Services.Pedido
                 : null;
         }
 
-        private static string EscaparCsv(string valor)
-        {
-            string texto = valor ?? string.Empty;
-            return texto.IndexOfAny(new[] { ';', '"', '\r', '\n' }) >= 0
-                ? $"\"{texto.Replace("\"", "\"\"")}\""
-                : texto;
-        }
     }
 }
