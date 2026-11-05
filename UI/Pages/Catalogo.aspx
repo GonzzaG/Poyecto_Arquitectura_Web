@@ -125,6 +125,10 @@
                             <span class="text-sm text-slate-600">Total</span>
                             <span id="carritoTotal" class="text-sm font-bold text-slate-950"></span>
                         </div>
+                        <button type="button" onclick="exportarCarritoXml()"
+                            class="mb-2 w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-cyan-700 hover:text-cyan-700">
+                            Exportar carrito XML
+                        </button>
                         <asp:Button ID="btnConfirmarCompra" runat="server" Text="Continuar compra →"
                             OnClick="btnConfirmarCompra_Click"
                             CssClass="w-full rounded bg-slate-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700" />
@@ -223,6 +227,54 @@
 
         function sincronizarCarritoHidden() {
             document.getElementById('<%= hfCarrito.ClientID %>').value = JSON.stringify(carrito);
+        }
+
+        function escaparXml(valor) {
+            return String(valor == null ? '' : valor)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+        }
+
+        function exportarCarritoXml() {
+            if (!carrito.length) return;
+
+            var productosXml = carrito.map(function (item) {
+                var subtotal = Number(item.Precio) * Number(item.Cantidad);
+                return [
+                    '    <producto>',
+                    '      <id>' + escaparXml(item.IdObjeto) + '</id>',
+                    '      <nombre>' + escaparXml(item.Nombre) + '</nombre>',
+                    '      <precioUnitario>' + Number(item.Precio).toFixed(2) + '</precioUnitario>',
+                    '      <cantidad>' + escaparXml(item.Cantidad) + '</cantidad>',
+                    '      <subtotal>' + subtotal.toFixed(2) + '</subtotal>',
+                    '      <imagenUrl>' + escaparXml(item.ImagenUrl) + '</imagenUrl>',
+                    '    </producto>'
+                ].join('\n');
+            }).join('\n');
+            var total = carrito.reduce(function (suma, item) {
+                return suma + Number(item.Precio) * Number(item.Cantidad);
+            }, 0);
+            var xml = [
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                '<carrito>',
+                '  <productos>',
+                productosXml,
+                '  </productos>',
+                '  <total>' + total.toFixed(2) + '</total>',
+                '</carrito>'
+            ].join('\n');
+            var archivo = new Blob([xml], { type: 'application/xml;charset=utf-8' });
+            var url = URL.createObjectURL(archivo);
+            var enlace = document.createElement('a');
+            enlace.href = url;
+            enlace.download = 'carrito.xml';
+            document.body.appendChild(enlace);
+            enlace.click();
+            enlace.remove();
+            window.setTimeout(function () { URL.revokeObjectURL(url); }, 0);
         }
 
         function persistirCarrito() {
