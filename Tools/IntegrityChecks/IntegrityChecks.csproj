@@ -1,0 +1,20 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <OutputPath>bin\Debug\</OutputPath><AssemblyName>IntegrityChecks</AssemblyName>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects><GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System"/><Reference Include="System.Core"/><Reference Include="System.Data"/>
+    <Reference Include="System.Xml"/><Reference Include="System.Xml.Linq"/><Reference Include="System.Configuration"/>
+    <Reference Include="System.IO.Compression"/><Reference Include="System.ComponentModel.DataAnnotations"/><Reference Include="System.Windows.Forms"/>
+    <Reference Include="EntityFramework"><HintPath>..\..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath></Reference>
+    <Reference Include="EntityFramework.SqlServer"><HintPath>..\..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath></Reference>
+    <ProjectReference Include="..\..\Business\Business.csproj"><Name>Business</Name><Project>{C507ED25-455D-441D-B5B5-A6D4A4476BEB}</Project></ProjectReference>
+    <ProjectReference Include="..\..\DAL\DAL.csproj"><Name>DAL</Name><Project>{8B624838-7DF1-4A2A-9345-E514B02E06C0}</Project></ProjectReference>
+    <ProjectReference Include="..\..\BEL\BEL.csproj"><Name>BEL</Name><Project>{F5D7B9E5-D7D6-466B-93FB-DB9E3F7CCA39}</Project></ProjectReference>
+    <Compile Include="Program.cs"/><None Include="App.config"/>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+</Project>
+

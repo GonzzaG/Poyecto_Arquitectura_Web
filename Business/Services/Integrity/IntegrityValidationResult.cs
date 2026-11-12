@@ -1,27 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
-using BEL;
+using DAL;
 
 namespace Business.Services.Integrity
 {
     public sealed class IntegrityValidationResult
     {
-        public List<Usuario> UsuariosConDVHInvalido { get; set; }
-        public bool DVVValido { get; set; }
-        public int DVVRegistrado { get; set; }
-        public int DVVCalculado { get; set; }
-
-        public bool EsValido
+        public List<IntegrityTableResult> Tablas { get; set; } = new List<IntegrityTableResult>();
+        public bool EsValido { get { return Tablas.Count == 2 && Tablas.All(t => t.EsValido); } }
+        public IEnumerable<IntegrityRecordResult> RegistrosInvalidos
         {
-            get { return !UsuariosConDVHInvalido.Any() && DVVValido; }
-        }
-
-        public IntegrityValidationResult()
-        {
-            UsuariosConDVHInvalido = new List<Usuario>();
-            DVVValido = true;
-            DVVRegistrado = -1;
-            DVVCalculado = -1;
+            get { return Tablas.SelectMany(t => t.Registros).Where(r => !r.EsValido); }
         }
     }
 }

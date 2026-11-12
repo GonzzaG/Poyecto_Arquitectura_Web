@@ -49,6 +49,7 @@
     <Compile Include="Common\AppException.cs" />
     <Compile Include="DatabaseBackup.cs" />
     <Compile Include="DigitoVerificadorVertical.cs" />
+    <Compile Include="IntegritySnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

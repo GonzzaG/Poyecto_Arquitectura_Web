@@ -11,6 +11,7 @@ namespace BEL
         public bool EsProducto { get; set; }
         public int Stock { get; set; }
         public string ImagenUrl { get; set; }
+        public string DVH { get; set; }
         public virtual ICollection<DetallePedido> DetallesPedido { get; set; }
 
         public Objeto()

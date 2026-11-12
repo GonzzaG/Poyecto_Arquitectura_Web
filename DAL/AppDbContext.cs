@@ -1,5 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Data;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using BEL;
 namespace DAL
 {
@@ -21,6 +25,44 @@ namespace DAL
         public DbSet<DetallePedido> DetallesPedido { get; set; }
         public DbSet<Objeto> Objetos { get; set; }
         public DbSet<DigitoVerificadorVertical> DigitosVerificadoresVerticales { get; set; }
+        public DbSet<IntegritySnapshot> IntegritySnapshots { get; set; }
+        internal bool OmitirControlIntegridad { get; set; }
+
+        public override int SaveChanges()
+        {
+            ChangeTracker.DetectChanges();
+            bool protegidos = ChangeTracker.Entries().Any(e =>
+                (e.Entity is Usuario || e.Entity is Objeto || e.Entity is IntegritySnapshot || e.Entity is DigitoVerificadorVertical)
+                && e.State != EntityState.Unchanged && e.State != EntityState.Detached);
+            if (OmitirControlIntegridad || !protegidos) return base.SaveChanges();
+
+            // La aplicación no puede modificar directamente los verificadores/copias.
+            if (ChangeTracker.Entries().Any(e =>
+                (e.Entity is IntegritySnapshot || e.Entity is DigitoVerificadorVertical)
+                && e.State != EntityState.Unchanged && e.State != EntityState.Detached))
+                throw new System.InvalidOperationException("Los verificadores se administran automáticamente.");
+
+            using (var transaction = Database.CurrentTransaction == null
+                ? Database.BeginTransaction(IsolationLevel.Serializable) : null)
+            {
+                ValidarDVH.BloquearTablas(this);
+                ValidarDVH.ExigirIntegridad(this); // AsNoTracking: compara SQL, no los cambios pendientes.
+                int cambios = base.SaveChanges();
+                ValidarDVH.GuardarVerificadores(this);
+                base.SaveChanges();
+                ValidarDVH.ExigirIntegridad(this);
+                transaction?.Commit();
+                return cambios;
+            }
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(SaveChanges());
+        }
+
+        public override Task<int> SaveChangesAsync() { return SaveChangesAsync(CancellationToken.None); }
 
         public DbSet<Sesion> Sesions { get; set; }
         public DbSet<DatabaseBackup> DatabaseBackups { get; set; }
@@ -44,7 +86,7 @@ namespace DAL
             modelBuilder.Entity<Usuario>().Property(x => x.Inactivo).HasColumnName("inactivo");
             modelBuilder.Entity<Usuario>().Property(x => x.IntentosFallidos).HasColumnName("intentos_fallidos");
             modelBuilder.Entity<Usuario>().Property(x => x.FechaBloqueo).HasColumnName("fecha_bloqueo");
-            modelBuilder.Entity<Usuario>().Property(x => x.DVH).HasColumnName("DVH");
+            modelBuilder.Entity<Usuario>().Property(x => x.DVH).HasColumnName("DVH").HasMaxLength(64).IsFixedLength().IsUnicode(false);
             modelBuilder.Entity<Usuario>().HasIndex(x => x.Email).IsUnique();
             modelBuilder.Entity<Usuario>()
                 .HasRequired(x => x.Rol)
@@ -113,12 +155,19 @@ namespace DAL
             modelBuilder.Entity<Objeto>().Property(x => x.EsProducto).HasColumnName("esProducto");
             modelBuilder.Entity<Objeto>().Property(x => x.Stock).HasColumnName("stock");
             modelBuilder.Entity<Objeto>().Property(x => x.ImagenUrl).HasColumnName("imagen_url").HasMaxLength(260);
+            modelBuilder.Entity<Objeto>().Property(x => x.DVH).HasColumnName("DVH").HasMaxLength(64).IsFixedLength().IsUnicode(false);
+
+            modelBuilder.Entity<IntegritySnapshot>().ToTable("INTEGRITY_SNAPSHOT");
+            modelBuilder.Entity<IntegritySnapshot>().HasKey(x => new { x.Tabla, x.RegistroId });
+            modelBuilder.Entity<IntegritySnapshot>().Property(x => x.Tabla).HasMaxLength(80);
+            modelBuilder.Entity<IntegritySnapshot>().Property(x => x.Datos).IsRequired();
+            modelBuilder.Entity<IntegritySnapshot>().Property(x => x.DVH).HasMaxLength(64).IsFixedLength().IsUnicode(false).IsRequired();
 
             modelBuilder.Entity<DigitoVerificadorVertical>().ToTable("DIGITO_VERIFICADOR_VERTICAL");
             modelBuilder.Entity<DigitoVerificadorVertical>().HasKey(x => x.Id);
             modelBuilder.Entity<DigitoVerificadorVertical>().Property(x => x.Id).HasColumnName("id_dvv");
             modelBuilder.Entity<DigitoVerificadorVertical>().Property(x => x.Tabla).HasColumnName("tabla").HasMaxLength(80).IsRequired();
-            modelBuilder.Entity<DigitoVerificadorVertical>().Property(x => x.Valor).HasColumnName("valor");
+            modelBuilder.Entity<DigitoVerificadorVertical>().Property(x => x.Valor).HasColumnName("valor").HasMaxLength(64).IsUnicode(false).IsRequired();
             modelBuilder.Entity<DigitoVerificadorVertical>().HasIndex(x => x.Tabla).IsUnique();
 
             modelBuilder.Entity<Sesion>().ToTable("SESION");

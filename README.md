@@ -2,6 +2,8 @@
 
 ## Requisitos previos
 
+Para preparar la prueba de alteración de USUARIO y productos de OBJETO, consultar [la guía de integridad](INTEGRIDAD_DEMO.md) y el script [IntegridadDemo.sql](Tools/IntegridadDemo.sql).
+
 - Visual Studio 2019 o superior
 - SQL Server (local o remoto)
 - Git instalado

@@ -56,11 +56,12 @@ namespace Business.Services.Usuarios
                 throw new InvalidOperationException($"Cuenta bloqueada por múltiples intentos fallidos. Intente nuevamente después de las {usuario.FechaBloqueo.Value:HH:mm:ss}.");
 
             var sessionManager = new SessionManager();
+            bool integridadValida = ValidarIntegridadEnLogin();
             try
             {
                 Cookie cookie = sessionManager.Login(email, password, usuario.Password);
-                _usuarioRepository.ActualizarBloqueo(email, 0, null);
-                ValidarIntegridadEnLogin(usuario);
+                if (integridadValida)
+                    _usuarioRepository.ActualizarBloqueo(email, 0, null);
 
                 return cookie;
             }
@@ -81,13 +82,14 @@ namespace Business.Services.Usuarios
                     nuevaFechaBloqueo = nuevosIntentos >= 3 ? DateTime.Now.AddMinutes(15) : (DateTime?)null;
                 }
 
-                _usuarioRepository.ActualizarBloqueo(email, nuevosIntentos, nuevaFechaBloqueo);
+                if (integridadValida)
+                    _usuarioRepository.ActualizarBloqueo(email, nuevosIntentos, nuevaFechaBloqueo);
                 throw new AppException("Contraseña incorrecta");
             }
         }
 
 
-        private static void ValidarIntegridadEnLogin(Usuario usuario)
+        private static bool ValidarIntegridadEnLogin()
         {
             try
             {
@@ -99,8 +101,10 @@ namespace Business.Services.Usuarios
 
                 if (hayErrorIntegridad)
                 {
-                    Trace.TraceWarning($"Se detectó error de integridad en USUARIO. DVH inválidos: {estado.UsuariosConDVHInvalido.Count}. DVV registrado: {estado.DVVRegistrado}. DVV calculado: {estado.DVVCalculado}.");
+                    Trace.TraceWarning("Se detectó error de integridad en: " +
+                        string.Join(", ", estado.Tablas.Where(t => !t.EsValido).Select(t => t.Tabla)));
                 }
+                return estado.EsValido;
             }
             catch (Exception ex)
             {
@@ -121,6 +125,7 @@ namespace Business.Services.Usuarios
 
                 EstablecerModoMantenimiento(true);
                 Trace.TraceError($"No se pudo validar integridad de datos: {errorMsg}");
+                return false;
             }
         }
 

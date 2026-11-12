@@ -48,9 +48,10 @@ namespace UI
         {
             try
             {
-                var usuariosReparados = _integrityService.ReparaIntegridad();
-                Application["IntegrityMaintenance"] = false;
-                ShowSuccess($"Se recalcularon DVH/DVV. Usuarios con DVH reparado: {usuariosReparados.Count}.", "Integridad Validada");
+                var estado = _integrityService.ValidarEstadoIntegridad();
+                Application["IntegrityMaintenance"] = !estado.EsValido;
+                Response.Redirect("~/Pages/IntegrityValidation.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
             }
             catch (Exception ex)
             {

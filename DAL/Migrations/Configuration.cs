@@ -15,12 +15,18 @@ namespace DAL.Migrations
 
         protected override void Seed(AppDbContext context)
         {
+            // Solo la migración nueva autoriza crear la referencia inicial. Un reinicio
+            // nunca vuelve a aceptar datos actuales ni repone productos eliminados desde SQL.
+            if (context.DigitosVerificadoresVerticales.Count(v =>
+                (v.Tabla == "USUARIO" || v.Tabla == "OBJETO") && v.Valor == ValidarDVH.Pendiente) != 2)
+                return;
             SeedProducto(context, "Split inverter 3000 frigorias", "Equipo split frio/calor con tecnologia inverter para ambientes medianos.", 920000m, 8, "~/Images/Productos/split-inverter.png");
             SeedProducto(context, "Termostato WiFi programable", "Termostato inteligente con control remoto y programacion semanal.", 185000m, 15, "~/Images/Productos/termostato-wifi.png");
             SeedProducto(context, "Filtro HEPA alta eficiencia", "Filtro HEPA para sistemas HVAC, retiene particulas finas y mejora la calidad del aire.", 76000m, 30, "~/Images/Productos/filtro-hepa.png");
             SeedProducto(context, "Compresor scroll 5TR", "Compresor scroll para equipos comerciales de climatizacion y refrigeracion.", 640000m, 6, "~/Images/Productos/compresor-scroll.png");
             SeedProducto(context, "Unidad condensadora comercial", "Unidad condensadora para camaras frigorificas y sistemas comerciales.", 1250000m, 4, "~/Images/Productos/unidad-condensadora.png");
             SeedProducto(context, "Ventilador centrifugo", "Ventilador centrifugo para conductos de ventilacion y extraccion.", 310000m, 10, "~/Images/Productos/ventilador-centrifugo.png");
+            ValidarDVH.InicializarDuranteMigracion(context);
         }
 
         private static void SeedProducto(AppDbContext context, string nombre, string descripcion, decimal precio, int stock, string imagenUrl)

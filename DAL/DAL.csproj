@@ -53,6 +53,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseSynchronization.cs" />
+    <Compile Include="IntegrityReport.cs" />
+    <Compile Include="Migrations\202701021200000_IntegridadUsuariosObjetosSha256.cs" />
+    <Compile Include="Migrations\202701021200000_IntegridadUsuariosObjetosSha256.Designer.cs">
+      <DependentUpon>202701021200000_IntegridadUsuariosObjetosSha256.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Ventas\DetalleVentaLectura.cs" />
     <Compile Include="Migrations\202604280000000_InitialCreate.cs" />
     <Compile Include="Migrations\202604280000000_InitialCreate.Designer.cs">
@@ -129,6 +134,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202606142135062_AgregarUrlAObjeto.resx">
       <DependentUpon>202606142135062_AgregarUrlAObjeto.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202701021200000_IntegridadUsuariosObjetosSha256.resx">
+      <DependentUpon>202701021200000_IntegridadUsuariosObjetosSha256.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

@@ -4,7 +4,6 @@ using BEL.Constantes;
 using Business.Helper;
 using Business.Services.Integrity;
 using Business.Services.Usuarios;
-using DAL;
 
 namespace UI.Pages
 {
@@ -15,134 +14,97 @@ namespace UI.Pages
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            MostrarBotonRecalcular();
-
-            if (!IsPostBack)
+            // Revisar también en POST: ocultar un botón no autoriza una recuperación.
+            if (!ValidarAcceso())
             {
-                if (!ValidarAcceso())
-                {
-                    Response.Redirect("~/Login", false);
-                    Context.ApplicationInstance.CompleteRequest();
-                    return;
-                }
-
-                CargarEstadoIntegridad();
+                BtnRestaurar.Visible = false;
+                BtnRecalcularTodo.Visible = false;
+                Response.Redirect("~/Login", false);
+                Context.ApplicationInstance.CompleteRequest();
+                return;
             }
-        }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-            MostrarBotonRecalcular();
-            base.OnPreRender(e);
-        }
-
-        private void MostrarBotonRecalcular()
-        {
-            LnkRecalcularTodos.Visible = true;
+            if (!IsPostBack) CargarEstadoIntegridad();
         }
 
         private bool ValidarAcceso()
         {
             var usuario = AutenticacionHelper.ObtenerUsuarioDesdeCookie(_usuarioService);
-            if (usuario == null)
-            {
-                return false;
-            }
-
-            return AutenticacionHelper.NivelAcceso((RolesEnum)usuario.IdRol)
+            return usuario != null && AutenticacionHelper.NivelAcceso((RolesEnum)usuario.IdRol)
                 >= AutenticacionHelper.NivelAcceso(RolesEnum.WEBMASTER);
         }
 
         private void CargarEstadoIntegridad()
         {
+            BtnRestaurar.Enabled = false;
             try
             {
                 var estado = _integrityService.ValidarEstadoIntegridad();
-                var usuariosInvalidos = estado.UsuariosConDVHInvalido;
-
-                LblDVV.Text = $"DVV registrado: {estado.DVVRegistrado} | DVV calculado: {estado.DVVCalculado}";
-                LblDVV.ForeColor = estado.DVVValido ? System.Drawing.Color.Green : System.Drawing.Color.OrangeRed;
-
-                if (estado.EsValido)
-                {
-                    LblEstado.Text = "Integridad confirmada: los DVH y el DVV de usuarios son validos.";
-                    LblEstado.ForeColor = System.Drawing.Color.Green;
-                    MostrarBotonRecalcular();
-                    Application["IntegrityMaintenance"] = false;
-                }
-                else
-                {
-                    LblEstado.Text = $"Se detecto error de integridad. Usuarios con DVH invalido: {usuariosInvalidos.Count}. DVV valido: {(estado.DVVValido ? "si" : "no")}.";
-                    LblEstado.ForeColor = System.Drawing.Color.OrangeRed;
-                    MostrarBotonRecalcular();
-                    Application["IntegrityMaintenance"] = true;
-                }
-
-                CargarUsuarios();
+                Application["IntegrityMaintenance"] = !estado.EsValido;
+                LblEstado.Text = estado.EsValido
+                    ? "Integridad confirmada: USUARIO y OBJETO son válidas."
+                    : "Tablas dañadas: " + string.Join(", ", estado.Tablas.Where(t => !t.EsValido).Select(t => t.Tabla))
+                        + ". Registros afectados: " + estado.RegistrosInvalidos.Count() + ".";
+                LblEstado.ForeColor = estado.EsValido ? System.Drawing.Color.Green : System.Drawing.Color.OrangeRed;
+                GvTablas.DataSource = estado.Tablas;
+                GvTablas.DataBind();
+                GvRegistros.DataSource = estado.RegistrosInvalidos.ToList();
+                GvRegistros.DataBind();
+                BtnRestaurar.Enabled = !estado.EsValido && estado.Tablas.All(t => t.RespaldoValido)
+                    && estado.RegistrosInvalidos.All(r => r.Estado == "Datos alterados" || r.Estado == "DVH alterado");
             }
             catch (Exception ex)
             {
                 Application["IntegrityMaintenance"] = true;
-                LblEstado.Text = "Error al validar integridad: " + ex.Message;
+                LblEstado.Text = Server.HtmlEncode("No se pudo validar integridad: " + ex.Message);
                 LblEstado.ForeColor = System.Drawing.Color.Red;
-                MostrarBotonRecalcular();
+                GvTablas.DataSource = null;
+                GvTablas.DataBind();
+                GvRegistros.DataSource = null;
+                GvRegistros.DataBind();
             }
-        }
-
-        private void CargarUsuarios()
-        {
-            var usuarios = _usuarioService.ObtenerTodos()
-                .OrderBy(u => u.IdUsuario)
-                .Select(u =>
-                {
-                    int dvhCalculado = ValidarDVH.CalcularDVH(u);
-                    bool valido = u.DVH.HasValue && u.DVH.Value == dvhCalculado;
-
-                    return new
-                    {
-                        u.IdUsuario,
-                        u.Email,
-                        u.Nombre,
-                        u.IdRol,
-                        DVH = u.DVH.HasValue ? u.DVH.Value.ToString() : "NULL",
-                        DVHCorrecto = dvhCalculado,
-                        Estado = valido ? "Valido" : "Recalcular"
-                    };
-                })
-                .ToList();
-
-            GvUsuarios.Visible = true;
-            GvUsuarios.DataSource = usuarios;
-            GvUsuarios.DataBind();
         }
 
         protected void BtnValidar_Click(object sender, EventArgs e)
         {
+            if (!ValidarAcceso()) return;
+            LblResultado.Text = "";
             CargarEstadoIntegridad();
         }
 
-        protected void RecalcularTodos_Click(object sender, EventArgs e)
+        protected void BtnRecalcularTodo_Click(object sender, EventArgs e)
         {
-            RecalcularTodos();
-        }
-
-        private void RecalcularTodos()
-        {
+            if (!ValidarAcceso()) return;
             try
             {
-                var usuariosReparados = _integrityService.ReparaIntegridad();
-                Application["IntegrityMaintenance"] = false;
-                LblEstado.Text = $"Se recalcularon DVH/DVV correctamente. Usuarios con DVH reparado: {usuariosReparados.Count}.";
-                LblEstado.ForeColor = System.Drawing.Color.Green;
-                MostrarBotonRecalcular();
-                CargarEstadoIntegridad();
+                int cantidad = _integrityService.RecalcularTodo();
+                LblResultado.Text = "Se recalcularon DVH y DVV de USUARIO y OBJETO. "
+                    + cantidad + " registros aceptados con sus valores actuales.";
+                LblResultado.ForeColor = System.Drawing.Color.Green;
             }
             catch (Exception ex)
             {
                 Application["IntegrityMaintenance"] = true;
-                LblEstado.Text = "Error al reparar integridad: " + ex.Message;
-                LblEstado.ForeColor = System.Drawing.Color.Red;
+                LblResultado.Text = Server.HtmlEncode("No se pudo recalcular: " + ex.Message);
+                LblResultado.ForeColor = System.Drawing.Color.Red;
             }
+            CargarEstadoIntegridad();
+        }
+
+        protected void BtnRestaurar_Click(object sender, EventArgs e)
+        {
+            if (!ValidarAcceso()) return;
+            try
+            {
+                int cantidad = _integrityService.RestaurarDatosOriginales();
+                LblResultado.Text = "Se recuperaron los valores originales de " + cantidad + " registros.";
+                LblResultado.ForeColor = System.Drawing.Color.Green;
+            }
+            catch (Exception ex)
+            {
+                LblResultado.Text = Server.HtmlEncode("No se recuperaron los datos: " + ex.Message);
+                LblResultado.ForeColor = System.Drawing.Color.Red;
+            }
+            CargarEstadoIntegridad();
         }
     }
 }

@@ -4,6 +4,6 @@ namespace BEL
     {
         public int Id { get; set; }
         public string Tabla { get; set; }
-        public int Valor { get; set; }
+        public string Valor { get; set; }
     }
 }

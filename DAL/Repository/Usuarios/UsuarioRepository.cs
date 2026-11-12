@@ -14,6 +14,7 @@ namespace DAL.Repository.Usuarios
                 using (var context = new AppDbContext())
                 {
                     Usuario usuario = context.Usuarios.FirstOrDefault(u => u.Email == email);
+                    if (usuario == null) return null;
                     usuario.Rol = context.Roles.FirstOrDefault(r => r.IdRol == usuario.IdRol);
                     return usuario;
                 }
@@ -40,7 +41,6 @@ namespace DAL.Repository.Usuarios
                 {
                     usuario.IntentosFallidos = intentosFallidos;
                     usuario.FechaBloqueo = fechaBloqueo;
-                    ValidarDVH.ActualizarDVHUsuario(context, usuario);
                     context.SaveChanges();
                 }
             }

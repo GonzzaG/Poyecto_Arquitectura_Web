@@ -5,7 +5,7 @@
         <p class="text-sm font-semibold uppercase tracking-wide text-cyan-700">Mantenimiento</p>
         <h1 class="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">La aplicación está temporalmente en mantenimiento</h1>
         <p class="mt-4 text-base leading-7 text-slate-600">
-            Se detectó una inconsistencia de integridad en los usuarios. El equipo administrador ya puede acceder para validar y recalcular los dígitos verificadores.
+            Se detectó una inconsistencia de integridad en USUARIO u OBJETO. El webmaster puede acceder para identificar las tablas y registros afectados y recuperar los datos originales.
         </p>
         <div class="mt-8 flex flex-col gap-3 sm:flex-row">
             <asp:Button
